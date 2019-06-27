@@ -168,7 +168,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
      * created. Use a value of {@code null} to remove a previous set {@link ChannelOption}.
      */
     public <T> B option(ChannelOption<T> option, T value) {
-        if (option == null) {
+        if (option == null) {// option: SO_BACKLOG
             throw new NullPointerException("option");
         }
         if (value == null) {

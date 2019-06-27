@@ -141,9 +141,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
         provider = selectorProvider;
         final SelectorTuple selectorTuple = openSelector();
-        selector = selectorTuple.selector;
-        unwrappedSelector = selectorTuple.unwrappedSelector;
-        selectStrategy = strategy;
+        selector = selectorTuple.selector; //
+        unwrappedSelector = selectorTuple.unwrappedSelector;// at window is WindowsSelectorImpl
+        selectStrategy = strategy; // default is DefaultSelectStrategy
     }
 
     private static final class SelectorTuple {
