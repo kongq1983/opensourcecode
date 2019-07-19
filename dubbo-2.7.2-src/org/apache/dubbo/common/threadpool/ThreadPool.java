@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
 
 import static org.apache.dubbo.common.constants.CommonConstants.THREADPOOL_KEY;
 
-/**
+/** 1. size=SynchronousQueue 2. size<0 new LinkedBlockingQueue<Runnable>() 无限量 3. size>0 new LinkedBlockingQueue<Runnable>(size)
  * ThreadPool
  */
 @SPI("fixed")

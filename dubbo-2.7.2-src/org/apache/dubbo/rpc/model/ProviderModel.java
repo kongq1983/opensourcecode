@@ -37,9 +37,9 @@ public class ProviderModel {
             throw new IllegalArgumentException("Service[" + serviceName + "]Target is NULL.");
         }
 
-        this.serviceName = serviceName;
-        this.serviceInstance = serviceInstance;
-        this.serviceInterfaceClass = serviceInterfaceClass;
+        this.serviceName = serviceName; // com.kq.api.IDemoService:1.0.0
+        this.serviceInstance = serviceInstance; // DemoServiceImpl
+        this.serviceInterfaceClass = serviceInterfaceClass; //interface com.kq.api.IDemoService
 
         initMethod();
     }
@@ -76,7 +76,7 @@ public class ProviderModel {
         }
         return null;
     }
-
+    // 把导出方法 放到methodModels
     private void initMethod() {
         Method[] methodsToExport = null;
         methodsToExport = this.serviceInterfaceClass.getMethods();

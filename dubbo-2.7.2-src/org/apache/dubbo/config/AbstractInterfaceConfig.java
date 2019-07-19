@@ -319,16 +319,16 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     /**
      *
      * Load the registry and conversion it to {@link URL}, the priority order is: system property > dubbo registry config
-     *
+     * registries: <dubbo:registry address="zookeeper://192.168.5.217:2181" protocol="dubbo" valid="true" zookeeperProtocol="true" id="zookeeper" prefix="dubbo.registries." />
      * @param provider whether it is the provider side
      * @return
      */
     protected List<URL> loadRegistries(boolean provider) {
         // check && override if necessary
         List<URL> registryList = new ArrayList<URL>();
-        if (CollectionUtils.isNotEmpty(registries)) {
+        if (CollectionUtils.isNotEmpty(registries)) {// <dubbo:registry address="zookeeper://192.168.5.217:2181" protocol="dubbo" valid="true" zookeeperProtocol="true" id="zookeeper" prefix="dubbo.registries." />
             for (RegistryConfig config : registries) {
-                String address = config.getAddress();
+                String address = config.getAddress(); //zookeeper://192.168.5.217:2181
                 if (StringUtils.isEmpty(address)) {
                     address = ANYHOST_VALUE;
                 }
@@ -342,7 +342,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         map.put(PROTOCOL_KEY, DUBBO_PROTOCOL);
                     }
                     List<URL> urls = UrlUtils.parseURLs(address, map);
-
+                    // url: zookeeper://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?application=hello-world-app&dubbo=2.0.2&pid=12888&release=2.7.2&timestamp=1563504347330
                     for (URL url : urls) {
                         url = URLBuilder.from(url)
                                 .addParameter(REGISTRY_KEY, url.getProtocol())
