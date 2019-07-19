@@ -1405,7 +1405,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            ctx.fireChannelRead(msg);
+            ctx.fireChannelRead(msg);//向下传递channelRead事件
         }
 
         @Override
