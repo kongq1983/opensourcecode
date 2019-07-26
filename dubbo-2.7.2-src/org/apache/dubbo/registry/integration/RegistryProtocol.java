@@ -410,7 +410,7 @@ public class RegistryProtocol implements Protocol {
         directory.buildRouterChain(subscribeUrl);
         directory.subscribe(subscribeUrl.addParameter(CATEGORY_KEY,
                 PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY));
-
+// interface com.kq.api.IDemoService -> zookeeper://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?anyhost=true&application=consumer-of-helloworld-app&check=false&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&register=true&register.ip=192.168.6.170&release=2.7.2&remote.application=hello-world-app&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0
         Invoker invoker = cluster.join(directory);
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
         return invoker;

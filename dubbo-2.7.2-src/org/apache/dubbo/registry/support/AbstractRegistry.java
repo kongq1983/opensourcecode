@@ -427,7 +427,7 @@ public abstract class AbstractRegistry implements Registry {
             return;
         }
 
-        try {
+        try {// empty://192.168.6.170/com.kq.api.IDemoService?application=consumer-of-helloworld-app&category=routers&dubbo=2.0.2&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&release=2.7.2&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0 empty://192.168.6.170/com.kq.api.IDemoService?application=consumer-of-helloworld-app&category=configurators&dubbo=2.0.2&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&release=2.7.2&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0 dubbo://192.168.6.170:12345/com.kq.api.IDemoService?anyhost=true&application=hello-world-app&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=com.kq.api.IDemoService&methods=getMessage&pid=9640&register=true&release=2.7.2&revision=1.0.0&side=provider&threads=200&timestamp=1563877994191&version=1.0.0
             StringBuilder buf = new StringBuilder();
             Map<String, List<URL>> categoryNotified = notified.get(url);
             if (categoryNotified != null) {

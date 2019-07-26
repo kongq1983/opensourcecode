@@ -171,16 +171,16 @@ class URL implements Serializable {
                 && StringUtils.isNotEmpty(password)) {
             throw new IllegalArgumentException("Invalid url, password without username!");
         }
-        this.protocol = protocol;
+        this.protocol = protocol; //consumer
         this.username = username;
         this.password = password;
-        this.host = host;
+        this.host = host; // 消费者的话是客户端主机
         this.port = (port < 0 ? 0 : port);
         // trim the beginning "/"
         while (path != null && path.startsWith("/")) {
             path = path.substring(1);
         }
-        this.path = path;
+        this.path = path; // com.kq.api.IDemoService  接口
         if (parameters == null) {
             parameters = new HashMap<>();
         } else {
@@ -1319,7 +1319,7 @@ class URL implements Serializable {
      */
     public String getEncodedServiceKey() {
         String serviceKey = this.getServiceKey();
-        serviceKey = serviceKey.replaceFirst("/", "*");
+        serviceKey = serviceKey.replaceFirst("/", "*");  // com.kq.api.IDemoService:1.0.0
         return serviceKey;
     }
 

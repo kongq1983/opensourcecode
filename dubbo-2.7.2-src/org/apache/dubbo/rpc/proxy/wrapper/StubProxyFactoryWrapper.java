@@ -54,7 +54,7 @@ public class StubProxyFactoryWrapper implements ProxyFactory {
     private Protocol protocol;
 
     public StubProxyFactoryWrapper(ProxyFactory proxyFactory) {
-        this.proxyFactory = proxyFactory;
+        this.proxyFactory = proxyFactory; // JavassistProxyFactory
     }
 
     public void setProtocol(Protocol protocol) {

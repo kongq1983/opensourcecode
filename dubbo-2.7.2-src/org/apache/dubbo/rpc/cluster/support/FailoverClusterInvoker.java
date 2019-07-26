@@ -42,7 +42,7 @@ import static org.apache.dubbo.rpc.cluster.Constants.RETRIES_KEY;
  * Note that retry causes latency.
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Failover">Failover</a>
- *
+ * 根据retrys ，默认尝试3次
  */
 public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
@@ -70,7 +70,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
             //Reselect before retry to avoid a change of candidate `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy.
             if (i > 0) {
-                checkWhetherDestroyed();
+                checkWhetherDestroyed(); //判断服务器是否down了
                 copyInvokers = list(invocation);
                 // check again
                 checkInvokers(copyInvokers, invocation);

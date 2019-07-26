@@ -83,7 +83,7 @@ public class ProviderConsumerRegTable {
 
     public static void registerConsumer(Invoker invoker, URL registryUrl, URL consumerUrl, RegistryDirectory registryDirectory) {
         ConsumerInvokerWrapper wrapperInvoker = new ConsumerInvokerWrapper(invoker, registryUrl, consumerUrl, registryDirectory);
-        String serviceUniqueName = consumerUrl.getServiceKey();
+        String serviceUniqueName = consumerUrl.getServiceKey(); // com.kq.api.IDemoService:1.0.0
         Set<ConsumerInvokerWrapper> invokers = consumerInvokers.get(serviceUniqueName);
         if (invokers == null) {
             consumerInvokers.putIfAbsent(serviceUniqueName, new ConcurrentHashSet<ConsumerInvokerWrapper>());

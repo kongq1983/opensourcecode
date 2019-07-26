@@ -163,9 +163,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
                 }
             } else {
                 List<URL> urls = new ArrayList<>();
-                for (String path : toCategoriesPath(url)) {
+                for (String path : toCategoriesPath(url)) { // 服务提供者根节点 path: /dubbo/com.kq.api.IDemoService/providers
                     ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.get(url);
-                    if (listeners == null) {
+                    if (listeners == null) {// path: /dubbo/com.kq.api.IDemoService/configurators  path: /dubbo/com.kq.api.IDemoService/routers
                         zkListeners.putIfAbsent(url, new ConcurrentHashMap<>());
                         listeners = zkListeners.get(url);
                     }
@@ -175,7 +175,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                         zkListener = listeners.get(listener);
                     }
                     zkClient.create(path, false);
-                    List<String> children = zkClient.addChildListener(path, zkListener);
+                    List<String> children = zkClient.addChildListener(path, zkListener); //具体的服务提供者（注册）
                     if (children != null) {
                         urls.addAll(toUrlsWithEmpty(url, path, children));
                     }

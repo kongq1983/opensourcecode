@@ -34,10 +34,10 @@ public class ConsumerInvokerWrapper<T> implements Invoker {
     private RegistryDirectory registryDirectory;
 
     public ConsumerInvokerWrapper(Invoker<T> invoker, URL registryUrl, URL consumerUrl, RegistryDirectory registryDirectory) {
-        this.invoker = invoker;
-        this.originUrl = URL.valueOf(invoker.getUrl().toFullString());
-        this.registryUrl = URL.valueOf(registryUrl.toFullString());
-        this.consumerUrl = consumerUrl;
+        this.invoker = invoker; // interface com.kq.api.IDemoService -> zookeeper://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?anyhost=true&application=consumer-of-helloworld-app&check=false&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&register=true&register.ip=192.168.6.170&release=2.7.2&remote.application=hello-world-app&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0
+        this.originUrl = URL.valueOf(invoker.getUrl().toFullString()); // zookeeper://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?anyhost=true&application=consumer-of-helloworld-app&check=false&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&register=true&register.ip=192.168.6.170&release=2.7.2&remote.application=hello-world-app&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0
+        this.registryUrl = URL.valueOf(registryUrl.toFullString()); // zookeeper://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?application=consumer-of-helloworld-app&dubbo=2.0.2&pid=9228&refer=application%3Dconsumer-of-helloworld-app%26dubbo%3D2.0.2%26interface%3Dcom.kq.api.IDemoService%26lazy%3Dfalse%26methods%3DgetMessage%26pid%3D9228%26register.ip%3D192.168.6.170%26release%3D2.7.2%26revision%3D1.0.0%26side%3Dconsumer%26sticky%3Dfalse%26timeout%3D1000%26timestamp%3D1563880571249%26version%3D1.0.0&release=2.7.2&timestamp=1563880888058
+        this.consumerUrl = consumerUrl; // consumer://192.168.6.170/com.kq.api.IDemoService?application=consumer-of-helloworld-app&dubbo=2.0.2&interface=com.kq.api.IDemoService&lazy=false&methods=getMessage&pid=9228&release=2.7.2&revision=1.0.0&side=consumer&sticky=false&timeout=1000&timestamp=1563880571249&version=1.0.0
         this.registryDirectory = registryDirectory;
     }
 
