@@ -660,8 +660,8 @@ public class ExtensionLoader<T> {
                 }
             }
         }
-    }
-
+    } // type: org.apache.dubbo.common.extension.ExtensionFactory
+    // dir: META-INF/dubbo/internal/
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type) {
         String fileName = dir + type;
         try {
@@ -683,12 +683,12 @@ public class ExtensionLoader<T> {
                     type + ", description file: " + fileName + ").", t);
         }
     }
-
+    // 解析META-INF/dubbo/internal下文件  key   value
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader, java.net.URL resourceURL) {
         try {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
+                String line; //比如:   line: adaptive=org.apache.dubbo.common.extension.factory.AdaptiveExtensionFactory
+                while ((line = reader.readLine()) != null) { //line: spi=org.apache.dubbo.common.extension.factory.SpiExtensionFactory
                     final int ci = line.indexOf('#');
                     if (ci >= 0) {
                         line = line.substring(0, ci);
@@ -696,11 +696,11 @@ public class ExtensionLoader<T> {
                     line = line.trim();
                     if (line.length() > 0) {
                         try {
-                            String name = null;
-                            int i = line.indexOf('=');
+                            String name = null; // adaptive、spi  等dubbo.internal下文件的key
+                            int i = line.indexOf('='); // spi=org.apache.dubbo.common.extension.factory.SpiExtensionFactory
                             if (i > 0) {
-                                name = line.substring(0, i).trim();
-                                line = line.substring(i + 1).trim();
+                                name = line.substring(0, i).trim(); // META-INF/dubbo/internal下文件的key  比如spi
+                                line = line.substring(i + 1).trim(); // META-INF/dubbo/internal下文件的value  比如org.apache.dubbo.common.extension.factory.SpiExtensionFactory
                             }
                             if (line.length() > 0) {
                                 loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name);
@@ -717,9 +717,9 @@ public class ExtensionLoader<T> {
                     type + ", class file: " + resourceURL + ") in " + resourceURL, t);
         }
     }
-
+    // jar:file:/C:/Users/kongqi/.m2/repository/org/apache/dubbo/dubbo/2.7.2/dubbo-2.7.2.jar!/META-INF/dubbo/internal/org.apache.dubbo.common.extension.ExtensionFactory
     private void loadClass(Map<String, Class<?>> extensionClasses, java.net.URL resourceURL, Class<?> clazz, String name) throws NoSuchMethodException {
-        if (!type.isAssignableFrom(clazz)) {
+        if (!type.isAssignableFrom(clazz)) { // clazz: class org.apache.dubbo.config.spring.extension.SpringExtensionFactory   name:spring
             throw new IllegalStateException("Error occurred when loading extension class (interface: " +
                     type + ", class line: " + clazz.getName() + "), class "
                     + clazz.getName() + " is not subtype of interface.");
@@ -741,15 +741,15 @@ public class ExtensionLoader<T> {
             if (ArrayUtils.isNotEmpty(names)) {
                 cacheActivateClass(clazz, names[0]);
                 for (String n : names) {
-                    cacheName(clazz, n);
-                    saveInExtensionClass(extensionClasses, clazz, name);
+                    cacheName(clazz, n); // cachedNames.put(clazz, name);
+                    saveInExtensionClass(extensionClasses, clazz, name); // extensionClasses.put(name, clazz)
                 }
             }
         }
     }
 
-    /**
-     * cache name
+    /** spring=org.apache.dubbo.config.spring.extension.SpringExtensionFactory
+     * cache name 比如 clazz: org.apache.dubbo.config.spring.extension.SpringExtensionFactory name: spring
      */
     private void cacheName(Class<?> clazz, String name) {
         if (!cachedNames.containsKey(clazz)) {
@@ -757,7 +757,7 @@ public class ExtensionLoader<T> {
         }
     }
 
-    /**
+    /** 比如 clazz: org.apache.dubbo.config.spring.extension.SpringExtensionFactory name: spring
      * put clazz in extensionClasses
      */
     private void saveInExtensionClass(Map<String, Class<?>> extensionClasses, Class<?> clazz, String name) {

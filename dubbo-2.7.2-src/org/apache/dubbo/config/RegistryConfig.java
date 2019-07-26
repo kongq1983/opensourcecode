@@ -157,15 +157,15 @@ public class RegistryConfig extends AbstractConfig {
     }
 
     public RegistryConfig(String address, String protocol) {
-        setAddress(address);
-        setProtocol(protocol);
+        setAddress(address); // zookeeper://192.168.5.217:2181
+        setProtocol(protocol); //dubbo
     }
 
     public String getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    public void setProtocol(String protocol) { // dubbo
         checkName(PROTOCOL_KEY, protocol);
         this.protocol = protocol;
         this.updateIdIfAbsent(protocol);
@@ -177,11 +177,11 @@ public class RegistryConfig extends AbstractConfig {
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.address = address; //zookeeper://192.168.5.217:2181
         if (address != null) {
             int i = address.indexOf("://");
             if (i > 0) {
-                this.updateIdIfAbsent(address.substring(0, i));
+                this.updateIdIfAbsent(address.substring(0, i)); // zookeeper
             }
         }
     }
