@@ -110,7 +110,7 @@ public class ExtensionLoader<T> {
         return type.isAnnotationPresent(SPI.class);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null) {
             throw new IllegalArgumentException("Extension type == null");
@@ -305,7 +305,7 @@ public class ExtensionLoader<T> {
         Holder<Object> holder = getOrCreateHolder(name);
         return (T) holder.get();
     }
-
+    // 不存在则创建Holder，存在则从cachedInstances里取
     private Holder<Object> getOrCreateHolder(String name) {
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
@@ -665,7 +665,7 @@ public class ExtensionLoader<T> {
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type) {
         String fileName = dir + type;
         try {
-            Enumeration<java.net.URL> urls;
+            Enumeration<java.net.URL> urls; // 从类记载器 得到文件  比如： META-INF/dubbo/internal/org.apache.dubbo.rpc.cluster.RouterFactory
             ClassLoader classLoader = findClassLoader();
             if (classLoader != null) {
                 urls = classLoader.getResources(fileName);
@@ -683,7 +683,7 @@ public class ExtensionLoader<T> {
                     type + ", description file: " + fileName + ").", t);
         }
     }
-    // 解析META-INF/dubbo/internal下文件  key   value
+    // 1.读取资源文件中的内容，一行一行读取 2. 得到每行的key value  3. 缓存类  (解析META-INF/dubbo/internal下文件  key   value)
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader, java.net.URL resourceURL) {
         try {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceURL.openStream(), StandardCharsets.UTF_8))) {
@@ -727,7 +727,7 @@ public class ExtensionLoader<T> {
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz);
         } else if (isWrapperClass(clazz)) {
-            cacheWrapperClass(clazz);
+            cacheWrapperClass(clazz);  //放到 Set<Class<?>> cachedWrapperClasses
         } else {
             clazz.getConstructor();
             if (StringUtils.isEmpty(name)) {

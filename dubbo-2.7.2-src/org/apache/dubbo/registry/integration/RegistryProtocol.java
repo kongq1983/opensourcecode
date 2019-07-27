@@ -370,7 +370,7 @@ public class RegistryProtocol implements Protocol {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") //type： com.kq.api.IDemoService
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         url = URLBuilder.from(url)
                 .setProtocol(url.getParameter(REGISTRY_KEY, DEFAULT_REGISTRY))
@@ -380,7 +380,7 @@ public class RegistryProtocol implements Protocol {
         if (RegistryService.class.equals(type)) {
             return proxyFactory.getInvoker((T) registry, type, url);
         }
-
+//url: registry://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?application=consumer-of-helloworld-app&dubbo=2.0.2&pid=16428&refer=application%3Dconsumer-of-helloworld-app%26dubbo%3D2.0.2%26interface%3Dcom.kq.api.IDemoService%26lazy%3Dfalse%26methods%3DgetMessage%26pid%3D16428%26register.ip%3D192.168.6.170%26release%3D2.7.2%26revision%3D1.0.0%26side%3Dconsumer%26sticky%3Dfalse%26timeout%3D1000%26timestamp%3D1564198045818%26version%3D1.0.0&registry=zookeeper&release=2.7.2&timestamp=1564209439677
         // group="a,b" or group="*"
         Map<String, String> qs = StringUtils.parseQueryString(url.getParameterAndDecoded(REFER_KEY));
         String group = qs.get(GROUP_KEY);
