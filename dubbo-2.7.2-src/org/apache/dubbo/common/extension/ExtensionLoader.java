@@ -633,11 +633,11 @@ public class ExtensionLoader<T> {
         cacheDefaultExtensionName();
 
         Map<String, Class<?>> extensionClasses = new HashMap<>();
-        loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName());
+        loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName()); // META-INF/dubbo/internal/
         loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName().replace("org.apache", "com.alibaba"));
-        loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName());
+        loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName()); // META-INF/dubbo/
         loadDirectory(extensionClasses, DUBBO_DIRECTORY, type.getName().replace("org.apache", "com.alibaba"));
-        loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName());
+        loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName()); // META-INF/services/
         loadDirectory(extensionClasses, SERVICES_DIRECTORY, type.getName().replace("org.apache", "com.alibaba"));
         return extensionClasses;
     }
@@ -702,12 +702,12 @@ public class ExtensionLoader<T> {
                                 name = line.substring(0, i).trim(); // META-INF/dubbo/internal下文件的key  比如spi
                                 line = line.substring(i + 1).trim(); // META-INF/dubbo/internal下文件的value  比如org.apache.dubbo.common.extension.factory.SpiExtensionFactory
                             }
-                            if (line.length() > 0) {
-                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name);
+                            if (line.length() > 0) { //loadClass:   cacheAdaptiveClass or cacheWrapperClass or cache extensionClasses
+                                loadClass(extensionClasses, resourceURL, Class.forName(line, true, classLoader), name); //会缓存class
                             }
                         } catch (Throwable t) {
                             IllegalStateException e = new IllegalStateException("Failed to load extension class (interface: " + type + ", class line: " + line + ") in " + resourceURL + ", cause: " + t.getMessage(), t);
-                            exceptions.put(line, e);
+                            exceptions.put(line, e); // 找不到需要的类，抛异常 key: org.apache.dubbo.rpc.protocol.memcached.MemcachedProtocol
                         }
                     }
                 }
@@ -741,7 +741,7 @@ public class ExtensionLoader<T> {
             if (ArrayUtils.isNotEmpty(names)) {
                 cacheActivateClass(clazz, names[0]);
                 for (String n : names) {
-                    cacheName(clazz, n); // cachedNames.put(clazz, name);
+                    cacheName(clazz, n); // 不存在 则 cachedNames.put(clazz, name);
                     saveInExtensionClass(extensionClasses, clazz, name); // extensionClasses.put(name, clazz)
                 }
             }
