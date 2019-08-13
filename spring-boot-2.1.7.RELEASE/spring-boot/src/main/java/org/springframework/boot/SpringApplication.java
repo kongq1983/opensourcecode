@@ -264,11 +264,11 @@ public class SpringApplication {
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
-		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
-		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
-		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		this.mainApplicationClass = deduceMainApplicationClass();
+		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources)); // 这里就是SpringMvcApplication的实例
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();//SERVLET
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));// 找到*META-INF/spring.factories*中声明的所有ApplicationContextInitializer的实现类并将其实例化
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class)); //找到*META-INF/spring.factories*中声明的所有ApplicationListener的实现类并将其实例化
+		this.mainApplicationClass = deduceMainApplicationClass(); //获得当前执行main方法的类对象，这里就是SpringMvcApplication的实例
 	}
 
 	private Class<?> deduceMainApplicationClass() {
