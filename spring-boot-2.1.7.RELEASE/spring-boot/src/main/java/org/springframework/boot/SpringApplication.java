@@ -417,7 +417,7 @@ public class SpringApplication {
 		ClassLoader classLoader = getClassLoader();
 		// Use names and ensure unique to protect against duplicates
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
-		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
+		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names); // 初始化 放入列表，并返回
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}
@@ -430,9 +430,9 @@ public class SpringApplication {
 			try {
 				Class<?> instanceClass = ClassUtils.forName(name, classLoader);
 				Assert.isAssignable(type, instanceClass);
-				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes);
-				T instance = (T) BeanUtils.instantiateClass(constructor, args);
-				instances.add(instance);
+				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes); //得到构造器
+				T instance = (T) BeanUtils.instantiateClass(constructor, args); // 初始化对象
+				instances.add(instance); //初始化对象放入列表
 			}
 			catch (Throwable ex) {
 				throw new IllegalArgumentException("Cannot instantiate " + type + " : " + name, ex);
