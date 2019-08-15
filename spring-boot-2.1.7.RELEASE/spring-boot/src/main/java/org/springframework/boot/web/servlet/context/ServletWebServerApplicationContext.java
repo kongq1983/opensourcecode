@@ -146,7 +146,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		}
 	}
 
-	@Override
+	@Override// first step
 	protected void onRefresh() {
 		super.onRefresh();
 		try {
@@ -157,7 +157,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		}
 	}
 
-	@Override
+	@Override// Second step  先onRefresh
 	protected void finishRefresh() {
 		super.finishRefresh();
 		WebServer webServer = startWebServer();
@@ -177,7 +177,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		ServletContext servletContext = getServletContext();
 		if (webServer == null && servletContext == null) {
 			ServletWebServerFactory factory = getWebServerFactory();
-			this.webServer = factory.getWebServer(getSelfInitializer());
+			this.webServer = factory.getWebServer(getSelfInitializer());// if tomcat : TomcatWebServer
 		}
 		else if (servletContext != null) {
 			try {

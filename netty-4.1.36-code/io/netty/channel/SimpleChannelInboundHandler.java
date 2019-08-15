@@ -114,7 +114,7 @@ public abstract class SimpleChannelInboundHandler<I> extends ChannelInboundHandl
         }
     }
 
-    /**
+    /** 当从服务器接收到1条消息被调用
      * <strong>Please keep in mind that this method will be renamed to
      * {@code messageReceived(ChannelHandlerContext, I)} in 5.0.</strong>
      *

@@ -299,14 +299,14 @@ public class SpringApplication {
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty(); //这是设置系统属性java.awt.headless
 		SpringApplicationRunListeners listeners = getRunListeners(args); //获取到 META-INF/spring.factories中配置的SpringApplicationRunListener
-		listeners.starting();
+		listeners.starting();// 发送事件  org.springframework.boot.context.event.ApplicationStartingEvent
 		try { //命令行参数包装为了ApplicationArguments
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments); //准备好了Environment，此刻Environment中都有哪些配置参数
 			configureIgnoreBeanInfo(environment);
 			Banner printedBanner = printBanner(environment); // 打印springboot LOGo图标
-			context = createApplicationContext(); //创建ApplicationContext
-			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+			context = createApplicationContext(); //创建ApplicationContext   servlet:AnnotationConfigServletWebServerApplicationContext
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,// 得到所有的FailureAnalyzer
 					new Class[] { ConfigurableApplicationContext.class }, context); // 获取到 META-INF/spring.factories中配置的SpringBootExceptionReporter
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner); //准备ApplicationContext
 			refreshContext(context); // 刷新ApplicationContext
@@ -324,7 +324,7 @@ public class SpringApplication {
 		}
 
 		try {
-			listeners.running(context); //发布running中事件
+			listeners.running(context); //发布running中事件  ApplicationReadyEvent
 		}
 		catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, null);
@@ -565,7 +565,7 @@ public class SpringApplication {
 		if (contextClass == null) {
 			try {
 				switch (this.webApplicationType) {
-				case SERVLET:
+				case SERVLET: // AnnotationConfigServletWebServerApplicationContext
 					contextClass = Class.forName(DEFAULT_SERVLET_WEB_CONTEXT_CLASS);
 					break;
 				case REACTIVE:
