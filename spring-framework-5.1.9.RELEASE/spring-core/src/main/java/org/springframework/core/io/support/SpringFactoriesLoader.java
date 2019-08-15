@@ -124,11 +124,11 @@ public final class SpringFactoriesLoader {
 
 	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
 		MultiValueMap<String, String> result = cache.get(classLoader);
-		if (result != null) {
+		if (result != null) { //已经处理过了  直接返回
 			return result;
 		}
 //url: // file:/C:/Users/kongqi/.m2/repository/org/springframework/spring-beans/5.1.9.RELEASE/spring-beans-5.1.9.RELEASE.jar!/META-INF/spring.factories
-		try {
+		try { //得到classloader下的所有jar包中的spring.factories的文件
 			Enumeration<URL> urls = (classLoader != null ?
 					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
 					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
@@ -136,7 +136,7 @@ public final class SpringFactoriesLoader {
 			while (urls.hasMoreElements()) {
 				URL url = urls.nextElement();
 				UrlResource resource = new UrlResource(url);
-				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+				Properties properties = PropertiesLoaderUtils.loadProperties(resource); // 得到spring.factories的内容
 				for (Map.Entry<?, ?> entry : properties.entrySet()) { // key: spring.factories的key  value: spring.factories的value
 					String factoryClassName = ((String) entry.getKey()).trim(); // spring.factories的key
 					for (String factoryName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {//value根据逗号，分隔

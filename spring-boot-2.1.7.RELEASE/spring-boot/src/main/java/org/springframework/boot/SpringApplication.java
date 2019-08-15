@@ -297,26 +297,26 @@ public class SpringApplication {
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
-		configureHeadlessProperty();
-		SpringApplicationRunListeners listeners = getRunListeners(args);
+		configureHeadlessProperty(); //这是设置系统属性java.awt.headless
+		SpringApplicationRunListeners listeners = getRunListeners(args); //获取到 META-INF/spring.factories中配置的SpringApplicationRunListener
 		listeners.starting();
-		try {
+		try { //命令行参数包装为了ApplicationArguments
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments); //准备好了Environment，此刻Environment中都有哪些配置参数
 			configureIgnoreBeanInfo(environment);
-			Banner printedBanner = printBanner(environment);
-			context = createApplicationContext();
+			Banner printedBanner = printBanner(environment); // 打印springboot LOGo图标
+			context = createApplicationContext(); //创建ApplicationContext
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
-					new Class[] { ConfigurableApplicationContext.class }, context);
-			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
-			refreshContext(context);
+					new Class[] { ConfigurableApplicationContext.class }, context); // 获取到 META-INF/spring.factories中配置的SpringBootExceptionReporter
+			prepareContext(context, environment, listeners, applicationArguments, printedBanner); //准备ApplicationContext
+			refreshContext(context); // 刷新ApplicationContext
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), stopWatch);
 			}
-			listeners.started(context);
-			callRunners(context, applicationArguments);
+			listeners.started(context); //发布started事件
+			callRunners(context, applicationArguments); //执行所有的Runners
 		}
 		catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, listeners);
@@ -324,22 +324,22 @@ public class SpringApplication {
 		}
 
 		try {
-			listeners.running(context);
+			listeners.running(context); //发布running中事件
 		}
 		catch (Throwable ex) {
 			handleRunFailure(context, ex, exceptionReporters, null);
 			throw new IllegalStateException(ex);
 		}
-		return context;
+		return context; // 返回ok的ConfigurableApplicationContext
 	}
 
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments) {
 		// Create and configure the environment
-		ConfigurableEnvironment environment = getOrCreateEnvironment();
-		configureEnvironment(environment, applicationArguments.getSourceArgs());
-		listeners.environmentPrepared(environment);
-		bindToSpringApplication(environment);
+		ConfigurableEnvironment environment = getOrCreateEnvironment(); // 根据应用类型，创建对应的Environment对象，会装载环境变量、系统参数、具体应用类型配置参数
+		configureEnvironment(environment, applicationArguments.getSourceArgs()); //配置环境：加入命令行参数PropertySource,配置启用的profiles
+		listeners.environmentPrepared(environment); // 触发RunListener环境准备完成回调
+		bindToSpringApplication(environment); // 将environment绑定到SpringApplication（不需详看）
 		if (!this.isCustomEnvironment) {
 			environment = new EnvironmentConverter(getClassLoader()).convertEnvironmentIfNecessary(environment,
 					deduceEnvironmentClass());
