@@ -351,7 +351,7 @@ public class SpringApplication {
 	private Class<? extends StandardEnvironment> deduceEnvironmentClass() {
 		switch (this.webApplicationType) {
 		case SERVLET:
-			return StandardServletEnvironment.class;
+			return StandardServletEnvironment.class; // web 返回这个
 		case REACTIVE:
 			return StandardReactiveWebEnvironment.class;
 		default:
@@ -361,15 +361,15 @@ public class SpringApplication {
 
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
 			SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
-		context.setEnvironment(environment);
-		postProcessApplicationContext(context);
-		applyInitializers(context);
-		listeners.contextPrepared(context);
-		if (this.logStartupInfo) {
+		context.setEnvironment(environment); // 设置环境对象
+		postProcessApplicationContext(context); // 设置ApplicationContext的beanNameGenerator、resourceLoader、addConversionService（如果通过SpringApplication编程方式指定了它们）
+		applyInitializers(context); // 应用初始化器对ApplicationContext进行初始化处理（Initializers在构造SpringApplication时 就从spring.factories中加载到了）
+		listeners.contextPrepared(context); // 发布ApplicationContext准备妥当事件
+		if (this.logStartupInfo) { // 打印startup日志信息
 			logStartupInfo(context.getParent() == null);
 			logStartupProfileInfo(context);
 		}
-		// Add boot specific singleton beans
+		// Add boot specific singleton beans 添加 spring boot 中特定的单例 bean 到 beanFactory中
 		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
 		if (printedBanner != null) {
@@ -379,11 +379,11 @@ public class SpringApplication {
 			((DefaultListableBeanFactory) beanFactory)
 					.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
-		// Load the sources
+		// Load the sources 加载PrimarySource、其他编程式指定的source 配置类中的Bean定义
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
 		load(context, sources.toArray(new Object[0]));
-		listeners.contextLoaded(context);
+		listeners.contextLoaded(context); // 发布ApplicationContext加载Bean定义完毕事件
 	}
 
 	private void refreshContext(ConfigurableApplicationContext context) {
