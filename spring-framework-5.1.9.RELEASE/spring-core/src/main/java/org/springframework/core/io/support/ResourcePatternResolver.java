@@ -43,7 +43,7 @@ import org.springframework.core.io.ResourceLoader;
  * matching resources from the class path. Note that the resource location is
  * expected to be a path without placeholders in this case (e.g. "/beans.xml");
  * JAR files or classes directories can contain multiple files of the same name.
- *
+ * 加载resource
  * @author Juergen Hoeller
  * @since 1.0.2
  * @see org.springframework.core.io.Resource
