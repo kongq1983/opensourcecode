@@ -935,7 +935,7 @@ public abstract class ClassUtils {
 				(typeName.equals(clazz.getTypeName()) || typeName.equals(clazz.getSimpleName())));
 	}
 
-	/**
+	/** 获得类名，去掉包名称
 	 * Get the class name without the qualified package name.
 	 * @param className the className to get the short name for
 	 * @return the class name of the class without the package name
