@@ -58,7 +58,7 @@ import org.springframework.lang.Nullable;
 public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 
-	/**
+	/** 上面接口:环境变量参数、properties，提供beanFactory行为，提供父子容器功能，国际化，应用事件发布接口，加载resource
 	 * Return the unique id of this application context.
 	 * @return the unique id of the context, or {@code null} if none
 	 */
@@ -77,7 +77,7 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	 */
 	String getDisplayName();
 
-	/**
+	/** 获取启动时间
 	 * Return the timestamp when this context was first loaded.
 	 * @return the timestamp (ms) when this context was first loaded
 	 */

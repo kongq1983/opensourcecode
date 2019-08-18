@@ -82,7 +82,7 @@ import org.springframework.util.Assert;
  * <p>For custom application context implementations that are supposed to read
  * special bean definition formats in a refreshable manner, consider deriving
  * from the {@link AbstractRefreshableApplicationContext} base class.
- *
+ * 通用实现
  * @author Juergen Hoeller
  * @author Chris Beams
  * @since 1.1.2
@@ -91,7 +91,7 @@ import org.springframework.util.Assert;
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
  */
-public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
+public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {// 通用实现
 
 	private final DefaultListableBeanFactory beanFactory;
 
@@ -261,7 +261,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * @see #registerBeanDefinition
 	 */
 	@Override
-	protected final void refreshBeanFactory() throws IllegalStateException {
+	protected final void refreshBeanFactory() throws IllegalStateException { //刷新bean工厂
 		if (!this.refreshed.compareAndSet(false, true)) {
 			throw new IllegalStateException(
 					"GenericApplicationContext does not support multiple refresh attempts: just call 'refresh' once");

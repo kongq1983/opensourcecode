@@ -169,7 +169,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/** Parent context. */
 	@Nullable
-	private ApplicationContext parent;
+	private ApplicationContext parent; //父容器
 
 	/** Environment used by this context. */
 	@Nullable
@@ -179,7 +179,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
 	/** System time in milliseconds when this context started. */
-	private long startupDate;
+	private long startupDate; //开始时间
 
 	/** Flag that indicates whether this context is currently active. */
 	private final AtomicBoolean active = new AtomicBoolean();
@@ -476,7 +476,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		if (parent != null) {
 			Environment parentEnvironment = parent.getEnvironment();
 			if (parentEnvironment instanceof ConfigurableEnvironment) {
-				getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
+				getEnvironment().merge((ConfigurableEnvironment) parentEnvironment); // 环境合并
 			}
 		}
 	}
