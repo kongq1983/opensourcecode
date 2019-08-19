@@ -50,9 +50,9 @@ public class AnnotatedBeanDefinitionReader {
 	private final BeanDefinitionRegistry registry;
 
 	private BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
-
+	// 主要负责对Scope注解的解析 ScopeMetadata就是对Scope注解的描述转换, 以Metadata结尾命名的表示对元数据(注解)的描述
 	private ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
-
+	// ConditionEvaluator 这个类主要用于完成条件注解@Conditional的解析和判断
 	private ConditionEvaluator conditionEvaluator;
 
 

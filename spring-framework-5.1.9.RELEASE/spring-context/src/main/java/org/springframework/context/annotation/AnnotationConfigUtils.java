@@ -147,7 +147,7 @@ public abstract class AnnotationConfigUtils {
 	 */
 	public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
-
+		//从registry里得到beanFactory
 		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
 		if (beanFactory != null) {
 			if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
@@ -213,7 +213,7 @@ public abstract class AnnotationConfigUtils {
 			BeanDefinitionRegistry registry, RootBeanDefinition definition, String beanName) {
 
 		definition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE); // InfrastructureAdvisorAutoProxyCreator只会为基础设施类型的Advisor自动创建代理对象
-		registry.registerBeanDefinition(beanName, definition);
+		registry.registerBeanDefinition(beanName, definition);//org.springframework.context.annotation.AnnotationConfigApplicationContext
 		return new BeanDefinitionHolder(definition, beanName);
 	}
 
