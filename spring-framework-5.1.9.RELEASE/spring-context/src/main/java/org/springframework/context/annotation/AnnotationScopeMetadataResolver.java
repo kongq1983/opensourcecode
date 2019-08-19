@@ -76,7 +76,7 @@ public class AnnotationScopeMetadataResolver implements ScopeMetadataResolver {
 
 	@Override
 	public ScopeMetadata resolveScopeMetadata(BeanDefinition definition) {
-		ScopeMetadata metadata = new ScopeMetadata();
+		ScopeMetadata metadata = new ScopeMetadata(); // 默认单例 and ScopedProxyMode.NO
 		if (definition instanceof AnnotatedBeanDefinition) {
 			AnnotatedBeanDefinition annDef = (AnnotatedBeanDefinition) definition;
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(
