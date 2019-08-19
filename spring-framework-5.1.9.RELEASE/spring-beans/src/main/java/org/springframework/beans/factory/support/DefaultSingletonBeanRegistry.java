@@ -81,7 +81,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	//registeredSingletons: 保存当前所有已注册的bean
 	/** Set of registered singletons, containing the bean names in registration order. 保存当前所有已注册的bean*/
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
-
+    // add: beforeSingletonCreation   remove: afterSingletonCreation  check: isSingletonCurrentlyInCreation
 	/** Names of beans that are currently in creation. 存放正在创建bean的beanName*/
 	private final Set<String> singletonsCurrentlyInCreation =
 			Collections.newSetFromMap(new ConcurrentHashMap<>(16));
@@ -211,8 +211,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				}
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
-				}
-				beforeSingletonCreation(beanName);
+				} // singletonsCurrentlyInCreation.add(beanName)
+				beforeSingletonCreation(beanName); //排除所有被创建检查排除的bean列表 添加存放正在创建的bean，如果存在会报错
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
 				if (recordSuppressedExceptions) {
@@ -242,7 +242,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
-					afterSingletonCreation(beanName);
+					afterSingletonCreation(beanName); //singletonsCurrentlyInCreation删除正在创建的bean
 				}
 				if (newSingleton) {
 					addSingleton(beanName, singletonObject);
