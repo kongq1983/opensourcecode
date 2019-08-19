@@ -139,7 +139,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		}
 	}
 
-	/**
+	/** 这里把beanName放到earlySingletonObjects，把beanName和创建bean工厂关联关系放到singletonFactories
 	 * Add the given singleton factory for building the specified singleton
 	 * if necessary.
 	 * <p>To be called for eager registration of singletons, e.g. to be able to

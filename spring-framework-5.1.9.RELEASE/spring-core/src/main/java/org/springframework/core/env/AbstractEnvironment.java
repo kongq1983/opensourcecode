@@ -293,13 +293,13 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	protected Set<String> doGetDefaultProfiles() {
 		synchronized (this.defaultProfiles) {
 			if (this.defaultProfiles.equals(getReservedDefaultProfiles())) {
-				String profiles = getProperty(DEFAULT_PROFILES_PROPERTY_NAME);
+				String profiles = getProperty(DEFAULT_PROFILES_PROPERTY_NAME); //spring.profiles.default
 				if (StringUtils.hasText(profiles)) {
 					setDefaultProfiles(StringUtils.commaDelimitedListToStringArray(
 							StringUtils.trimAllWhitespace(profiles)));
 				}
 			}
-			return this.defaultProfiles;
+			return this.defaultProfiles; //default
 		}
 	}
 

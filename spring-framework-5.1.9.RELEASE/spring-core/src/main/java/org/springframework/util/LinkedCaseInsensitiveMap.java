@@ -42,9 +42,9 @@ import org.springframework.lang.Nullable;
  */
 @SuppressWarnings("serial")
 public class LinkedCaseInsensitiveMap<V> implements Map<String, V>, Serializable, Cloneable {
-
+	//key: 原始key  value:数据
 	private final LinkedHashMap<String, V> targetMap;
-
+	// key: put的key.toLowercase()  value: put 的原始key
 	private final HashMap<String, String> caseInsensitiveKeys;
 
 	private final Locale locale;
@@ -144,7 +144,7 @@ public class LinkedCaseInsensitiveMap<V> implements Map<String, V>, Serializable
 	@Nullable
 	public V get(Object key) {
 		if (key instanceof String) {
-			String caseInsensitiveKey = this.caseInsensitiveKeys.get(convertKey((String) key));
+			String caseInsensitiveKey = this.caseInsensitiveKeys.get(convertKey((String) key)); // 获取原始key
 			if (caseInsensitiveKey != null) {
 				return this.targetMap.get(caseInsensitiveKey);
 			}

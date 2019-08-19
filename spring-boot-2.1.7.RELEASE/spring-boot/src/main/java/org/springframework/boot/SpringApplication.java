@@ -265,7 +265,7 @@ public class SpringApplication {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources)); // 这里就是SpringMvcApplication的实例
-		this.webApplicationType = WebApplicationType.deduceFromClasspath();//SERVLET
+		this.webApplicationType = WebApplicationType.deduceFromClasspath();// deduce(推断)web类型(servlet、reactive、NoWeb)
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));// 找到*META-INF/spring.factories*中声明的所有ApplicationContextInitializer的实现类并将其实例化
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class)); //找到*META-INF/spring.factories*中声明的所有ApplicationListener的实现类并将其实例化
 		this.mainApplicationClass = deduceMainApplicationClass(); //获得当前执行main方法的类对象，这里就是SpringMvcApplication的实例
@@ -335,7 +335,7 @@ public class SpringApplication {
 
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments) {
-		// Create and configure the environment
+		// Create and configure the environment  servlet是StandardServletEnvironment
 		ConfigurableEnvironment environment = getOrCreateEnvironment(); // 根据应用类型，创建对应的Environment对象，会装载环境变量、系统参数、具体应用类型配置参数
 		configureEnvironment(environment, applicationArguments.getSourceArgs()); //配置环境：加入命令行参数PropertySource,配置启用的profiles
 		listeners.environmentPrepared(environment); // 触发RunListener环境准备完成回调
@@ -380,7 +380,7 @@ public class SpringApplication {
 					.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
 		// Load the sources 加载PrimarySource、其他编程式指定的source 配置类中的Bean定义
-		Set<Object> sources = getAllSources();
+		Set<Object> sources = getAllSources(); // 这里得到启动类  SpringMvcApplication
 		Assert.notEmpty(sources, "Sources must not be empty");
 		load(context, sources.toArray(new Object[0]));
 		listeners.contextLoaded(context); // 发布ApplicationContext加载Bean定义完毕事件
@@ -447,7 +447,7 @@ public class SpringApplication {
 		}
 		switch (this.webApplicationType) {
 		case SERVLET:
-			return new StandardServletEnvironment();
+			return new StandardServletEnvironment(); //servlet
 		case REACTIVE:
 			return new StandardReactiveWebEnvironment();
 		default:

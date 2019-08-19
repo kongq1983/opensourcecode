@@ -198,7 +198,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 */
 	protected ServletWebServerFactory getWebServerFactory() {
 		// Use bean names so that we don't consider the hierarchy
-		String[] beanNames = getBeanFactory().getBeanNamesForType(ServletWebServerFactory.class);
+		String[] beanNames = getBeanFactory().getBeanNamesForType(ServletWebServerFactory.class); //Tomcat: tomcatServletWebServerFactory
 		if (beanNames.length == 0) {
 			throw new ApplicationContextException("Unable to start ServletWebServerApplicationContext due to missing "
 					+ "ServletWebServerFactory bean.");

@@ -71,13 +71,13 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 */
 	int ROLE_SUPPORT = 1;
 
-	/**
+	/** 看InfrastructureAdvisorAutoProxyCreator的isEligibleAdvisorBean 它只会为基础设施类型的Advisor自动创建代理对象
 	 * Role hint indicating that a {@code BeanDefinition} is providing an
 	 * entirely background role and has no relevance to the end-user. This hint is
 	 * used when registering beans that are completely part of the internal workings
 	 * of a {@link org.springframework.beans.factory.parsing.ComponentDefinition}.
 	 */
-	int ROLE_INFRASTRUCTURE = 2;
+	int ROLE_INFRASTRUCTURE = 2; // 看InfrastructureAdvisorAutoProxyCreator只会为基础设施类型的Advisor自动创建代理对象
 
 
 	// Modifiable attributes
