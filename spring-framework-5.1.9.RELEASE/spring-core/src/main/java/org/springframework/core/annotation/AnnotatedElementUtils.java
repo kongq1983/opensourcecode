@@ -969,7 +969,7 @@ public abstract class AnnotatedElementUtils {
 			@Nullable String annotationName, @Nullable Class<? extends Annotation> containerType,
 			Processor<T> processor, Set<AnnotatedElement> visited, int metaDepth) {
 
-		// Search in annotations
+		// Search in annotations @SpringBootApplication @MapperScan  appliction启动类的注解
 		for (Annotation annotation : annotations) {
 			Class<? extends Annotation> currentAnnotationType = annotation.annotationType();
 			if (!AnnotationUtils.isInJavaLangAnnotationPackage(currentAnnotationType)) {
