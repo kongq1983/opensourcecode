@@ -19,7 +19,7 @@ package io.shardingsphere.core.routing.strategy;
 
 /**
  * Sharding algorithm interface.
- * 
+ * 分片算法接口
  * @author zhangliang
  */
 public interface ShardingAlgorithm {

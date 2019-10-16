@@ -22,9 +22,9 @@ import io.shardingsphere.core.routing.strategy.ShardingAlgorithm;
 
 import java.util.Collection;
 
-/**
+/** 用于处理使用多键作为分片键进行分片的场景，包含多个分片键的逻辑较复杂，需要应用开发者自行处理其中的复杂度
  * Complex keys sharding algorithm.
- * 
+ * 复合分片算法 需要配合ComplexShardingStrategy使用
  * @author zhangliang
  */
 public interface ComplexKeysShardingAlgorithm extends ShardingAlgorithm {

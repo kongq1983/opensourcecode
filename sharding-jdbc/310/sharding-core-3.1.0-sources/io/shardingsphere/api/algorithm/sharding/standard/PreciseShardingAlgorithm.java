@@ -24,9 +24,9 @@ import java.util.Collection;
 
 /**
  * Precise sharding algorithm.
- * 
+ * 精确分片算法
  * @author zhangliang
- * 
+ * 用于处理使用单一键作为分片键的=与IN进行分片的场景。需要配合StandardShardingStrategy使用
  * @param <T> class type of sharding value
  */
 public interface PreciseShardingAlgorithm<T extends Comparable<?>> extends ShardingAlgorithm {

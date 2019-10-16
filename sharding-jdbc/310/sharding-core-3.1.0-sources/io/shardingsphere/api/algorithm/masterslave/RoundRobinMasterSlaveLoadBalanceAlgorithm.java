@@ -32,9 +32,9 @@ public final class RoundRobinMasterSlaveLoadBalanceAlgorithm implements MasterSl
     
     @Override
     public String getDataSource(final String name, final String masterDataSourceName, final List<String> slaveDataSourceNames) {
-        AtomicInteger count = COUNT_MAP.containsKey(name) ? COUNT_MAP.get(name) : new AtomicInteger(0);
+        AtomicInteger count = COUNT_MAP.containsKey(name) ? COUNT_MAP.get(name) : new AtomicInteger(0); //默认从0开始
         COUNT_MAP.putIfAbsent(name, count);
-        count.compareAndSet(slaveDataSourceNames.size(), 0);
-        return slaveDataSourceNames.get(Math.abs(count.getAndIncrement()) % slaveDataSourceNames.size());
+        count.compareAndSet(slaveDataSourceNames.size(), 0); // slave如果有多个 到slave.size=count  设置为0  比如slave 有3个 则count=3的时候 设置为0
+        return slaveDataSourceNames.get(Math.abs(count.getAndIncrement()) % slaveDataSourceNames.size()); // count每次都+1 slave从0开始取，到slave.size-1
     }
 }

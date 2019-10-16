@@ -33,10 +33,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-/**
+/** 提供对SQL语句中的=, IN和BETWEEN AND的分片操作支持
  * Standard sharding strategy.
- * 
- * @author zhangliang
+ * StandardShardingStrategy只支持单分片键，提供PreciseShardingAlgorithm和RangeShardingAlgorithm两个分片算法。
+ * @author zhangliang  PreciseShardingAlgorithm是必选的，用于处理=和IN的分片。RangeShardingAlgorithm是可选的，用于处理BETWEEN AND分片，如果不配置RangeShardingAlgorithm，SQL中的BETWEEN AND将按照全库路由处理。
  */
 public final class StandardShardingStrategy implements ShardingStrategy {
     

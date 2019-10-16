@@ -24,7 +24,7 @@ import java.util.Collection;
 
 /**
  * Sharding algorithm for hint without sharding keys.
- * 
+ * 用于处理使用Hint行分片的场景。需要配合HintShardingStrategy使用
  * @author zhangliang
  */
 public interface HintShardingAlgorithm extends ShardingAlgorithm {

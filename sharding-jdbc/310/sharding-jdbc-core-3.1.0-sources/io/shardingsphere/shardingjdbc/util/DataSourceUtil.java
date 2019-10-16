@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 /**
  * Data source utility class.
- *
+ * 设置datasource属性的值
  * @author zhangliang
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -59,14 +59,14 @@ public final class DataSourceUtil {
         }
         return result;
     }
-    
+    // 得到set方法的名称
     private static String getSetterMethodName(final String propertyName) {
         if (propertyName.contains("-")) {
             return CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, SET_METHOD_PREFIX + "-" + propertyName);
         }
         return SET_METHOD_PREFIX + String.valueOf(propertyName.charAt(0)).toUpperCase() + propertyName.substring(1, propertyName.length());
     }
-    
+    // 执行set方法 设置值
     private static void callSetterMethod(final DataSource dataSource, final String methodName, final String setterValue) {
         for (Class<?> each : generalClassType) {
             try {

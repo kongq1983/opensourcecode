@@ -24,9 +24,9 @@ import java.util.Collection;
 
 /**
  * Range sharding algorithm.
- * 
+ * 范围分片算法
  * @author zhangliang
- * 
+ * 用于处理使用单一键作为分片键的BETWEEN AND进行分片的场景。需要配合StandardShardingStrategy使用
  * @param <T> class type of sharding value
  */
 public interface RangeShardingAlgorithm<T extends Comparable<?>> extends ShardingAlgorithm {

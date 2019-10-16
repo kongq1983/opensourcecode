@@ -86,14 +86,14 @@ public class SpringBootConfiguration implements EnvironmentAware {
     @SuppressWarnings("unchecked")
     private void setDataSourceMap(final Environment environment) {
         String prefix = "sharding.jdbc.datasource.";
-        String dataSources = environment.getProperty(prefix + "names");
+        String dataSources = environment.getProperty(prefix + "names"); // key: sharding.jdbc.datasource.names  value: ds0,ds1,slave0,slave1
         for (String each : dataSources.split(",")) {
-            try {
+            try { //比如 sharding.jdbc.datasource.ds0  sharding.jdbc.datasource.ds1
                 Map<String, Object> dataSourceProps = PropertyUtil.handle(environment, prefix + each.trim(), Map.class);
                 Preconditions.checkState(!dataSourceProps.isEmpty(), "Wrong datasource properties!");
                 DataSource dataSource = DataSourceUtil
                     .getDataSource(dataSourceProps.get("type").toString(), dataSourceProps);
-                dataSourceMap.put(each, dataSource);
+                dataSourceMap.put(each, dataSource); //ds1: datasource   ds0: datasource
             } catch (final ReflectiveOperationException ex) {
                 throw new ShardingException("Can't find datasource type!", ex);
             }

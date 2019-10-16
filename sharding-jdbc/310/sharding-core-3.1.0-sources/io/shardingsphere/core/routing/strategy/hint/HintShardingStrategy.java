@@ -29,7 +29,7 @@ import java.util.TreeSet;
 
 /**
  * Hint sharding strategy.
- * 
+ * 通过Hint而非SQL解析的方式分片的策略
  * @author zhangliang
  */
 public final class HintShardingStrategy implements ShardingStrategy {

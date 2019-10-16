@@ -28,9 +28,9 @@ import lombok.Getter;
 import java.util.Collection;
 import java.util.TreeSet;
 
-/**
+/** 提供对SQL语句中的=, IN和BETWEEN AND的分片操作支持。ComplexShardingStrategy支持多分片键，由于多分片键之间的关系复杂
  * Complex sharding strategy.
- * 
+ * 因此并未进行过多的封装，而是直接将分片键值组合以及分片操作符透传至分片算法，完全由应用开发者实现，提供最大的灵活度
  * @author zhangliang
  */
 public final class ComplexShardingStrategy implements ShardingStrategy {
