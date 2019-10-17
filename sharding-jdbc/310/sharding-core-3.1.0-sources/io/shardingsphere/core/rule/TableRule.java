@@ -47,7 +47,7 @@ import java.util.Map;
 public final class TableRule {
     
     private final String logicTable;
-    
+    /** actual-data-nodes 真实数据库  actual-data-nodes: ms_ds$->{0..1}.account_$->{0..1} */
     private final List<DataNode> actualDataNodes;
     
     @Getter(AccessLevel.NONE)

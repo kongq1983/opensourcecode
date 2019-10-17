@@ -60,7 +60,7 @@ public final class StandardShardingStrategy implements ShardingStrategy {
         Collection<String> shardingResult = shardingValue instanceof ListShardingValue
                 ? doSharding(availableTargetNames, (ListShardingValue) shardingValue) : doSharding(availableTargetNames, (RangeShardingValue) shardingValue);
         Collection<String> result = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        result.addAll(shardingResult);
+        result.addAll(shardingResult); // shardingResult:  分片数据库DataSource
         return result;
     }
     

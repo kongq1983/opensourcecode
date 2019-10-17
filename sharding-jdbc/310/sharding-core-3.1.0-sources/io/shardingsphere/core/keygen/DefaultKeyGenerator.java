@@ -48,19 +48,19 @@ import java.util.Calendar;
  * @author gaohongtao
  */
 public final class DefaultKeyGenerator implements KeyGenerator {
-    
+    /** 2016-11-01 00:00:00 0毫秒 开始 */
     public static final long EPOCH;
-    
+    /** 序列占12位  */
     private static final long SEQUENCE_BITS = 12L;
-    
+    /** 机器ID占12位  */
     private static final long WORKER_ID_BITS = 10L;
     
     private static final long SEQUENCE_MASK = (1 << SEQUENCE_BITS) - 1;
-    
+    /** 12  机器ID左移12位*/
     private static final long WORKER_ID_LEFT_SHIFT_BITS = SEQUENCE_BITS;
-    
+    /** 22  时间左移22位 */
     private static final long TIMESTAMP_LEFT_SHIFT_BITS = WORKER_ID_LEFT_SHIFT_BITS + WORKER_ID_BITS;
-    
+    /** 1024 机器ID最大值 */
     private static final long WORKER_ID_MAX_VALUE = 1L << WORKER_ID_BITS;
     
     @Setter
@@ -83,7 +83,7 @@ public final class DefaultKeyGenerator implements KeyGenerator {
     private byte sequenceOffset;
     
     private long sequence;
-    
+    /** 最后1次获取id时间 */
     private long lastMilliseconds;
     
     /**
@@ -112,16 +112,16 @@ public final class DefaultKeyGenerator implements KeyGenerator {
      */
     @Override
     public synchronized Number generateKey() {
-        long currentMilliseconds = timeService.getCurrentMillis();
-        if (waitTolerateTimeDifferenceIfNeed(currentMilliseconds)) {
+        long currentMilliseconds = timeService.getCurrentMillis(); //获取当前毫秒数
+        if (waitTolerateTimeDifferenceIfNeed(currentMilliseconds)) { //时钟回跳  则等待
             currentMilliseconds = timeService.getCurrentMillis();
         }
-        if (lastMilliseconds == currentMilliseconds) {
-            if (0L == (sequence = (sequence + 1) & SEQUENCE_MASK)) {
+        if (lastMilliseconds == currentMilliseconds) {  //和上次获取id 时间一致
+            if (0L == (sequence = (sequence + 1) & SEQUENCE_MASK)) { //每台机器每毫秒4096 每台机器每秒4096000
                 currentMilliseconds = waitUntilNextTime(currentMilliseconds);
             }
         } else {
-            vibrateSequenceOffset();
+            vibrateSequenceOffset(); // 把序列值重置为1
             sequence = sequenceOffset;
         }
         lastMilliseconds = currentMilliseconds;
@@ -132,7 +132,7 @@ public final class DefaultKeyGenerator implements KeyGenerator {
     private boolean waitTolerateTimeDifferenceIfNeed(final long currentMilliseconds) {
         if (lastMilliseconds <= currentMilliseconds) {
             return false;
-        }
+        } //当前时间 小于最后一次处理时间  时钟回跳了
         long timeDifferenceMilliseconds = lastMilliseconds - currentMilliseconds;
         Preconditions.checkState(timeDifferenceMilliseconds < maxTolerateTimeDifferenceMilliseconds, 
                 "Clock is moving backwards, last time is %d milliseconds, current time is %d milliseconds", lastMilliseconds, currentMilliseconds);

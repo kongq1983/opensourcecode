@@ -70,7 +70,7 @@ public final class ShardingMasterSlaveRouter {
         sqlRouteResult.getRouteUnits().removeAll(toBeRemoved);
         sqlRouteResult.getRouteUnits().addAll(toBeAdded);
     }
-    
+    // DQL: Such as {@code SELECT}
     private boolean isMasterRoute(final SQLType sqlType) {
         return SQLType.DQL != sqlType || MasterVisitedManager.isMasterVisited() || HintManagerHolder.isMasterRouteOnly();
     }

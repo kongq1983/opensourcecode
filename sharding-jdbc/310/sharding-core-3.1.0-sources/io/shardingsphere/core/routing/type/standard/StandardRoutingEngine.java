@@ -54,7 +54,7 @@ import java.util.List;
 public final class StandardRoutingEngine implements RoutingEngine {
     
     private final ShardingRule shardingRule;
-    
+    /** 逻辑表名 比如t_account */
     private final String logicTableName;
     
     private final ShardingConditions shardingConditions;
@@ -179,7 +179,7 @@ public final class StandardRoutingEngine implements RoutingEngine {
         }
         return result;
     }
-    
+    // 得到分片DataSource
     private Collection<String> routeDataSources(final TableRule tableRule, final List<ShardingValue> databaseShardingValues) {
         Collection<String> availableTargetDatabases = tableRule.getActualDatasourceNames();
         if (databaseShardingValues.isEmpty()) {
@@ -196,7 +196,7 @@ public final class StandardRoutingEngine implements RoutingEngine {
                 : shardingRule.getTableShardingStrategy(tableRule).doSharding(availableTargetTables, tableShardingValues));
         Preconditions.checkState(!routedTables.isEmpty(), "no table route info");
         Collection<DataNode> result = new LinkedList<>();
-        for (String each : routedTables) {
+        for (String each : routedTables) { // each: tableName 具体路由到的真实表名  routedDataSource: 路由到的dataSource
             result.add(new DataNode(routedDataSource, each));
         }
         return result;

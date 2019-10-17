@@ -112,7 +112,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
     StatementUtil.applyTransactionTimeout(stmt, queryTimeout, transactionTimeout);
   }
-
+  // 假设FetchSize值是10 ResultSet会一次性从数据库服务器，得到10条记录，下次执行rs.next，就直接使用内存读取，不用和数据库交互了
   protected void setFetchSize(Statement stmt) throws SQLException {
     Integer fetchSize = mappedStatement.getFetchSize();
     if (fetchSize != null) {
