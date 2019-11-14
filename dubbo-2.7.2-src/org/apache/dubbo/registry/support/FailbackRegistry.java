@@ -225,7 +225,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
     ConcurrentMap<Holder, FailedNotifiedTask> getFailedNotified() {
         return failedNotified;
     }
-
+    //url的值 dubbo://192.168.3.107:12345/com.kq.api.IDemoService?anyhost=true&application=hello-world-app&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=com.kq.api.IDemoService&methods=getMessage&pid=22172&register=true&release=2.7.2&revision=1.0.0&side=provider&threads=200&timestamp=1573751073509&version=1.0.0
     @Override
     public void register(URL url) {
         super.register(url);

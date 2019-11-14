@@ -166,11 +166,11 @@ public class ZookeeperRegistry extends FailbackRegistry {
                 for (String path : toCategoriesPath(url)) { // 服务提供者根节点 path: /dubbo/com.kq.api.IDemoService/providers
                     ConcurrentMap<NotifyListener, ChildListener> listeners = zkListeners.get(url);
                     if (listeners == null) {// path: /dubbo/com.kq.api.IDemoService/configurators  path: /dubbo/com.kq.api.IDemoService/routers
-                        zkListeners.putIfAbsent(url, new ConcurrentHashMap<>());
+                        zkListeners.putIfAbsent(url, new ConcurrentHashMap<>()); //为空创建缓存
                         listeners = zkListeners.get(url);
                     }
                     ChildListener zkListener = listeners.get(listener);
-                    if (zkListener == null) {
+                    if (zkListener == null) { //为空 创建缓存
                         listeners.putIfAbsent(listener, (parentPath, currentChilds) -> ZookeeperRegistry.this.notify(url, listener, toUrlsWithEmpty(url, parentPath, currentChilds)));
                         zkListener = listeners.get(listener);
                     }
