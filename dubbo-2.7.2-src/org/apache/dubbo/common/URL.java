@@ -1009,7 +1009,7 @@ class URL implements Serializable {
         }
         return addParameter(key, String.valueOf(value));
     }
-
+    /** 相当于  map.put(key, value) */
     public URL addParameter(String key, String value) {
         if (StringUtils.isEmpty(key)
                 || StringUtils.isEmpty(value)) {
