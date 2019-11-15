@@ -231,7 +231,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	public Object getResourceFactory() {
 		return obtainDataSource();
 	}
-
+	/** DataSourceTransactionObject */
 	@Override
 	protected Object doGetTransaction() {
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
@@ -241,7 +241,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
-
+	/** connectionHolder != null && transactionActive==true */
 	@Override
 	protected boolean isExistingTransaction(Object transaction) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
@@ -265,7 +265,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				}
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
-
+			// 设置数据源事务对象的事务同步
 			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
 			con = txObject.getConnectionHolder().getConnection();
 
@@ -280,14 +280,14 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
-				con.setAutoCommit(false);
+				con.setAutoCommit(false);  //设置非自动提交事务
 			}
 
 			prepareTransactionalConnection(con, definition);
-			txObject.getConnectionHolder().setTransactionActive(true);
+			txObject.getConnectionHolder().setTransactionActive(true); // 事务激活标志
 
-			int timeout = determineTimeout(definition);
-			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
+			int timeout = determineTimeout(definition); // 默认-1
+			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) { // 不等于-1 设置超时时间
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
@@ -370,7 +370,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		// Reset connection.
 		Connection con = txObject.getConnectionHolder().getConnection();
 		try {
-			if (txObject.isMustRestoreAutoCommit()) {
+			if (txObject.isMustRestoreAutoCommit()) { // 重新设置自动提交
 				con.setAutoCommit(true);
 			}
 			DataSourceUtils.resetConnectionAfterTransaction(con, txObject.getPreviousIsolationLevel());
@@ -426,8 +426,8 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	private static class DataSourceTransactionObject extends JdbcTransactionObjectSupport {
 
 		private boolean newConnectionHolder;
-
-		private boolean mustRestoreAutoCommit;
+		/** true的情况下  用完需要setAutoCommit(true) */
+		private boolean mustRestoreAutoCommit; //
 
 		public void setConnectionHolder(@Nullable ConnectionHolder connectionHolder, boolean newConnectionHolder) {
 			super.setConnectionHolder(connectionHolder);

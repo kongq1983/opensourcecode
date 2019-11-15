@@ -88,7 +88,7 @@ public final class DefaultKeyGenerator implements KeyGenerator {
     
     /**
      * Set work process id.
-     * 
+     * 设置机器ID
      * @param workerId work process id
      */
     public static void setWorkerId(final long workerId) {

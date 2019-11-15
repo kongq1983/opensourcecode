@@ -61,7 +61,7 @@ public abstract class TransactionSynchronizationUtils {
 	 */
 	static Object unwrapResourceIfNecessary(Object resource) {
 		Assert.notNull(resource, "Resource must not be null");
-		Object resourceRef = resource;
+		Object resourceRef = resource; // 具体的DataSource
 		// unwrap infrastructure proxy
 		if (resourceRef instanceof InfrastructureProxy) {
 			resourceRef = ((InfrastructureProxy) resourceRef).getWrappedObject();

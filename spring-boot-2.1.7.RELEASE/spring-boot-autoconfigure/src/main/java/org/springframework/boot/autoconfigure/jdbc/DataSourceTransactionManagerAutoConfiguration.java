@@ -62,7 +62,7 @@ public class DataSourceTransactionManagerAutoConfiguration {
 			this.dataSource = dataSource;
 			this.transactionManagerCustomizers = transactionManagerCustomizers.getIfAvailable();
 		}
-
+		/** PlatformTransactionManager找不到该Bean的时候 初始化*/
 		@Bean
 		@ConditionalOnMissingBean(PlatformTransactionManager.class)
 		public DataSourceTransactionManager transactionManager(DataSourceProperties properties) {

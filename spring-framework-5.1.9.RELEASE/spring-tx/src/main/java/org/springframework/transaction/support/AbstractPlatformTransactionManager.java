@@ -348,7 +348,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// Use defaults if no transaction definition given.
 			definition = new DefaultTransactionDefinition();
 		}
-
+		/** connectionHolder != null && transactionActive==true */
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(definition, transaction, debugEnabled);
@@ -375,7 +375,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 				DefaultTransactionStatus status = newTransactionStatus(
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
-				doBegin(transaction, definition);
+				doBegin(transaction, definition); //开启事务
 				prepareSynchronization(status, definition);
 				return status;
 			}
@@ -525,18 +525,18 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				definition.isReadOnly(), debug, suspendedResources);
 	}
 
-	/**
+	/** 对TransactionSynchronizationManager设置 需要初始化事务同步
 	 * Initialize transaction synchronization as appropriate.
 	 */
 	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
 		if (status.isNewSynchronization()) {
-			TransactionSynchronizationManager.setActualTransactionActive(status.hasTransaction());
+			TransactionSynchronizationManager.setActualTransactionActive(status.hasTransaction());// 设置事物激活状态
 			TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(
 					definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT ?
-							definition.getIsolationLevel() : null);
-			TransactionSynchronizationManager.setCurrentTransactionReadOnly(definition.isReadOnly());
-			TransactionSynchronizationManager.setCurrentTransactionName(definition.getName());
-			TransactionSynchronizationManager.initSynchronization();
+							definition.getIsolationLevel() : null); // 设置事物隔离级别
+			TransactionSynchronizationManager.setCurrentTransactionReadOnly(definition.isReadOnly()); // 设置事物只读属性
+			TransactionSynchronizationManager.setCurrentTransactionName(definition.getName()); // 设置事物名称
+			TransactionSynchronizationManager.initSynchronization(); // 激活当前线程的事务同步。事务管理器在事务开始时调用
 		}
 	}
 
@@ -572,12 +572,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		if (TransactionSynchronizationManager.isSynchronizationActive()) {
 			List<TransactionSynchronization> suspendedSynchronizations = doSuspendSynchronization();
 			try {
-				Object suspendedResources = null;
+				Object suspendedResources = null; //挂起的资源  CollectionHolder
 				if (transaction != null) {
 					suspendedResources = doSuspend(transaction);
 				}
-				String name = TransactionSynchronizationManager.getCurrentTransactionName();
-				TransactionSynchronizationManager.setCurrentTransactionName(null);
+				String name = TransactionSynchronizationManager.getCurrentTransactionName(); //比如: 当前线程得到com.kq.jdbc1.service.impl.AccountServiceImpl.insert2
+				TransactionSynchronizationManager.setCurrentTransactionName(null); //当前线程 清空
 				boolean readOnly = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
 				TransactionSynchronizationManager.setCurrentTransactionReadOnly(false);
 				Integer isolationLevel = TransactionSynchronizationManager.getCurrentTransactionIsolationLevel();
@@ -604,7 +604,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 	}
 
-	/**
+	/** 事务恢复
 	 * Resume the given transaction. Delegates to the {@code doResume}
 	 * template method first, then resuming transaction synchronization.
 	 * @param transaction the current transaction object
@@ -715,7 +715,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	}
 
 	/**
-	 * Process an actual commit.
+	 * Process an actual commit. 真正提交
 	 * Rollback-only flags have already been checked and applied.
 	 * @param status object representing the transaction
 	 * @throws TransactionException in case of commit failure

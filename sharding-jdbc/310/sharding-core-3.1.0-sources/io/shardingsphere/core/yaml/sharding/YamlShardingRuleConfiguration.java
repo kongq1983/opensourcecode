@@ -83,7 +83,7 @@ public class YamlShardingRuleConfiguration {
      */
     public ShardingRuleConfiguration getShardingRuleConfiguration() {
         ShardingRuleConfiguration result = new ShardingRuleConfiguration();
-        result.setDefaultDataSourceName(defaultDataSourceName);
+        result.setDefaultDataSourceName(defaultDataSourceName);  //sharding.jdbc.config.sharding.default-data-source-name
         for (Entry<String, YamlTableRuleConfiguration> entry : tables.entrySet()) {
             YamlTableRuleConfiguration tableRuleConfig = entry.getValue();
             tableRuleConfig.setLogicTable(entry.getKey());

@@ -44,8 +44,8 @@ public final class MethodClassKey implements Comparable<MethodClassKey> {
 	 * on (may be {@code null} if identical to the declaring class)
 	 */
 	public MethodClassKey(Method method, @Nullable Class<?> targetClass) {
-		this.method = method;
-		this.targetClass = targetClass;
+		this.method = method; // 比如 public void com.kq.jdbc1.service.impl.AccountServiceImpl.updateName(java.lang.Long,java.lang.String)
+		this.targetClass = targetClass; //比如: com.kq.jdbc1.service.impl.AccountServiceImpl
 	}
 
 

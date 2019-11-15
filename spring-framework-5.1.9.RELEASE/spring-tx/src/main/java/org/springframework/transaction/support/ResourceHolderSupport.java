@@ -34,7 +34,7 @@ import org.springframework.transaction.TransactionTimedOutException;
  * @see org.springframework.jdbc.datasource.DataSourceUtils#applyTransactionTimeout
  */
 public abstract class ResourceHolderSupport implements ResourceHolder {
-
+	/** 设置数据源事务对象的事务同步 */
 	private boolean synchronizedWithTransaction = false;
 
 	private boolean rollbackOnly = false;

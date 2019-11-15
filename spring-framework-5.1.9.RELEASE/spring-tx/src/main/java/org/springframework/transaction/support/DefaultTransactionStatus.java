@@ -84,7 +84,7 @@ public class DefaultTransactionStatus extends AbstractTransactionStatus {
 			@Nullable Object transaction, boolean newTransaction, boolean newSynchronization,
 			boolean readOnly, boolean debug, @Nullable Object suspendedResources) {
 
-		this.transaction = transaction;
+		this.transaction = transaction; // 
 		this.newTransaction = newTransaction;
 		this.newSynchronization = newSynchronization;
 		this.readOnly = readOnly;

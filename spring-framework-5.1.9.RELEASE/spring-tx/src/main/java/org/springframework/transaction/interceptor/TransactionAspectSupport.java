@@ -390,11 +390,11 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		else {
 			PlatformTransactionManager defaultTransactionManager = getTransactionManager();
 			if (defaultTransactionManager == null) {
-				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);
+				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY); //判断缓存是否存在
 				if (defaultTransactionManager == null) {
-					defaultTransactionManager = this.beanFactory.getBean(PlatformTransactionManager.class);
+					defaultTransactionManager = this.beanFactory.getBean(PlatformTransactionManager.class); //从beanFactory的得到PlatformTransactionManager
 					this.transactionManagerCache.putIfAbsent(
-							DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager);
+							DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager); //放入缓存
 				}
 			}
 			return defaultTransactionManager;
@@ -464,7 +464,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			txAttr = new DelegatingTransactionAttribute(txAttr) {
 				@Override
 				public String getName() {
-					return joinpointIdentification;
+					return joinpointIdentification; // com.kq.jdbc1.service.impl.AccountServiceImpl.insert2
 				}
 			};
 		}
@@ -604,7 +604,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		@Nullable
 		private final TransactionAttribute transactionAttribute;
 
-		private final String joinpointIdentification;
+		private final String joinpointIdentification; // 比如: com.kq.jdbc1.service.impl.AccountServiceImpl.updateName
 
 		@Nullable
 		private TransactionStatus transactionStatus;
@@ -654,7 +654,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		public boolean hasTransaction() {
 			return (this.transactionStatus != null);
 		}
-
+		// 当前线程绑定TransactionInfo
 		private void bindToThread() {
 			// Expose current TransactionStatus, preserving any existing TransactionStatus
 			// for restoration after this transaction is complete.

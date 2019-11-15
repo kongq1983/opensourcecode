@@ -49,10 +49,10 @@ public class ConnectionHolder extends ResourceHolderSupport {
 
 	@Nullable
 	private ConnectionHandle connectionHandle;
-
+	/** 当前Connection */
 	@Nullable
 	private Connection currentConnection;
-
+	/** 事务激活标志 */
 	private boolean transactionActive = false;
 
 	@Nullable

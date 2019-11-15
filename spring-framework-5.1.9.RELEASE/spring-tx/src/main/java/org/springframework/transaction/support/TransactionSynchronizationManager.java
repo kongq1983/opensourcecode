@@ -127,7 +127,7 @@ public abstract class TransactionSynchronizationManager {
 		return (value != null);
 	}
 
-	/**
+	/** 根据当前线程获得具体的ConnectionHolder
 	 * Retrieve a resource for the given key that is bound to the current thread.
 	 * @param key the key to check (usually the resource factory)
 	 * @return a value bound to the current thread (usually the active
@@ -136,8 +136,8 @@ public abstract class TransactionSynchronizationManager {
 	 */
 	@Nullable
 	public static Object getResource(Object key) {
-		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
-		Object value = doGetResource(actualKey);
+		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key); //具体的DataSource
+		Object value = doGetResource(actualKey); //具体的ConnectionHolder
 		if (value != null && logger.isTraceEnabled()) {
 			logger.trace("Retrieved value [" + value + "] for key [" + actualKey + "] bound to thread [" +
 					Thread.currentThread().getName() + "]");
@@ -145,7 +145,7 @@ public abstract class TransactionSynchronizationManager {
 		return value;
 	}
 
-	/**
+	/** 根据当前线程获得ConnectionHolder
 	 * Actually check the value of the resource that is bound for the given key.
 	 */
 	@Nullable
@@ -169,21 +169,21 @@ public abstract class TransactionSynchronizationManager {
 
 	/**
 	 * Bind the given resource for the given key to the current thread.
-	 * @param key the key to bind the value to (usually the resource factory)
-	 * @param value the value to bind (usually the active resource object)
+	 * @param key the key to bind the value to (usually the resource factory)  具体的Datasource
+	 * @param value the value to bind (usually the active resource object)  ConnectionHolder
 	 * @throws IllegalStateException if there is already a value bound to the thread
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
 	public static void bindResource(Object key, Object value) throws IllegalStateException {
 		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
 		Assert.notNull(value, "Value must not be null");
-		Map<Object, Object> map = resources.get();
+		Map<Object, Object> map = resources.get(); //ThreadLocal
 		// set ThreadLocal Map if none found
 		if (map == null) {
 			map = new HashMap<>();
 			resources.set(map);
 		}
-		Object oldValue = map.put(actualKey, value);
+		Object oldValue = map.put(actualKey, value); //actualKey: 具体的DataSource  value: ConnectionHolder
 		// Transparently suppress a ResourceHolder that was marked as void...
 		if (oldValue instanceof ResourceHolder && ((ResourceHolder) oldValue).isVoid()) {
 			oldValue = null;
@@ -198,7 +198,7 @@ public abstract class TransactionSynchronizationManager {
 		}
 	}
 
-	/**
+	/** 当前线程取消给定的资源
 	 * Unbind a resource for the given key from the current thread.
 	 * @param key the key to unbind (usually the resource factory)
 	 * @return the previously bound value (usually the active resource object)

@@ -86,16 +86,16 @@ public final class PropertyUtil {
         }
         return Collections.unmodifiableMap(propertiesWithPlaceholderResolved);
     }
-    
+    /** springboot2 调用这个方法 */
     @SneakyThrows
     private static Object v2(final Environment environment, final String prefix, final Class<?> targetClass) {
         Class<?> binderClass = Class.forName("org.springframework.boot.context.properties.bind.Binder");
         Method getMethod = binderClass.getDeclaredMethod("get", Environment.class);
-        Method bindMethod = binderClass.getDeclaredMethod("bind", String.class, Class.class);
-        Object binderObject = getMethod.invoke(null, environment);
-        String prefixParam = prefix.endsWith(".") ? prefix.substring(0, prefix.length() - 1) : prefix;
-        Object bindResultObject = bindMethod.invoke(binderObject, prefixParam, targetClass);
-        Method resultGetMethod = bindResultObject.getClass().getDeclaredMethod("get");
+        Method bindMethod = binderClass.getDeclaredMethod("bind", String.class, Class.class); // public static Binder get(Environment environment);
+        Object binderObject = getMethod.invoke(null, environment); //这4句 其实就是调用Binder.get(environment) 方法
+        String prefixParam = prefix.endsWith(".") ? prefix.substring(0, prefix.length() - 1) : prefix; // 比如: sharding.jdbc.datasource.ds1
+        Object bindResultObject = bindMethod.invoke(binderObject, prefixParam, targetClass); // org.springframework.boot.context.properties.bind.BindResult对象  value是map对象
+        Method resultGetMethod = bindResultObject.getClass().getDeclaredMethod("get"); // 调用BindResult.get() 方法
         return resultGetMethod.invoke(bindResultObject);
     }
 }
