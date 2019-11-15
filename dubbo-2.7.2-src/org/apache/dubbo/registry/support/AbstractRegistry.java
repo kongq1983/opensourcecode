@@ -77,15 +77,15 @@ public abstract class AbstractRegistry implements Registry {
     private final Properties properties = new Properties();
     // File cache timing writing
     private final ExecutorService registryCacheExecutor = Executors.newFixedThreadPool(1, new NamedThreadFactory("DubboSaveRegistryCache", true));
-    // Is it synchronized to save the file
+    /** 是否同步保存缓存标志  */ // Is it synchronized to save the file
     private final boolean syncSaveFile;
     private final AtomicLong lastCacheChanged = new AtomicLong();
     private final AtomicInteger savePropertiesRetryTimes = new AtomicInteger();
     private final Set<URL> registered = new ConcurrentHashSet<>();
-    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>();
-    private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>();
+    private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<>(); /** notified 内存中服务缓存对象 key:providers consumers routes configurators*/
+    private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<>(); //内存中服务缓存对象 key:providers consumers routes configurators
     private URL registryUrl;
-    // Local disk cache file
+    /** 本地磁盘文件缓存对象 */ // Local disk cache file  本地磁盘文件缓存对象
     private File file;
 
     public AbstractRegistry(URL url) {
@@ -201,12 +201,12 @@ public abstract class AbstractRegistry implements Registry {
             logger.warn("Failed to save registry cache file, will retry, cause: " + e.getMessage(), e);
         }
     }
-
+    /** properties缓存初始化 */
     private void loadProperties() {
         if (file != null && file.exists()) {
             InputStream in = null;
             try {
-                in = new FileInputStream(file);
+                in = new FileInputStream(file); //读取磁盘上的文件
                 properties.load(in);
                 if (logger.isInfoEnabled()) {
                     logger.info("Load registry cache file " + file + ", data: " + properties);
