@@ -347,7 +347,7 @@ public class ExtensionLoader<T> {
         if (instance == null) {
             synchronized (holder) {
                 instance = holder.get();
-                if (instance == null) {
+                if (instance == null) { // double check
                     instance = createExtension(name);
                     holder.set(instance);
                 }
@@ -477,7 +477,7 @@ public class ExtensionLoader<T> {
             if (createAdaptiveInstanceError == null) {
                 synchronized (cachedAdaptiveInstance) {
                     instance = cachedAdaptiveInstance.get();
-                    if (instance == null) {
+                    if (instance == null) { // double check
                         try {
                             instance = createAdaptiveExtension();
                             cachedAdaptiveInstance.set(instance);
@@ -529,7 +529,7 @@ public class ExtensionLoader<T> {
         try {
             T instance = (T) EXTENSION_INSTANCES.get(clazz);
             if (instance == null) {
-                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance());
+                EXTENSION_INSTANCES.putIfAbsent(clazz, clazz.newInstance()); //key: clazz全名  value:初始化后的对象
                 instance = (T) EXTENSION_INSTANCES.get(clazz);
             }
             injectExtension(instance);
@@ -661,7 +661,7 @@ public class ExtensionLoader<T> {
             }
         }
     } // type: org.apache.dubbo.common.extension.ExtensionFactory
-    // dir: META-INF/dubbo/internal/
+    // dir: META-INF/dubbo/internal/   type: 具体接口
     private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, String type) {
         String fileName = dir + type;
         try {
@@ -726,7 +726,7 @@ public class ExtensionLoader<T> {
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz);
-        } else if (isWrapperClass(clazz)) {
+        } else if (isWrapperClass(clazz)) { //包装类  比如:org.apache.dubbo.rpc.proxy.wrapper.StubProxyFactoryWrapper
             cacheWrapperClass(clazz);  //放到 Set<Class<?>> cachedWrapperClasses
         } else {
             clazz.getConstructor();

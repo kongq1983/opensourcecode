@@ -55,7 +55,7 @@ public abstract class AbstractZookeeperClient<TargetDataListener, TargetChildLis
     }
 
     @Override
-    public void create(String path, boolean ephemeral) {
+    public void create(String path, boolean ephemeral) { // 比如: /dubbo/com.kq.api.IDemoService/providers
         if (!ephemeral) {
             if (checkExists(path)) {
                 return;

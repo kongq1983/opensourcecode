@@ -410,7 +410,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         exported = true;
 
         if (StringUtils.isEmpty(path)) {
-            path = interfaceName;
+            path = interfaceName; // 服务 com.kq.api.IDemoService
         }
         doExportUrls();
     }
@@ -449,8 +449,8 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() { //pathKey=com.kq.api.IDemoService:1.0.0
-        List<URL> registryURLs = loadRegistries(true);
-        for (ProtocolConfig protocolConfig : protocols) {
+        List<URL> registryURLs = loadRegistries(true); // registry://192.168.5.217:2181/org.apache.dubbo.registry.RegistryService?application=hello-world-app&dubbo=2.0.2&pid=25368&registry=zookeeper&release=2.7.2&timestamp=1573803517692
+        for (ProtocolConfig protocolConfig : protocols) { // pathKey:  com.kq.api.IDemoService:1.0.0
             String pathKey = URL.buildKey(getContextPath(protocolConfig).map(p -> p + "/" + path).orElse(path), group, version);
             ProviderModel providerModel = new ProviderModel(pathKey, ref, interfaceClass);
             ApplicationModel.initProviderModel(pathKey, providerModel);
@@ -531,14 +531,14 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 }
             } // end of methods for
         }
-
+        // 泛化
         if (ProtocolUtils.isGeneric(generic)) {
             map.put(GENERIC_KEY, generic);
             map.put(METHODS_KEY, ANY_VALUE);
         } else {
-            String revision = Version.getVersion(interfaceClass, version);
+            String revision = Version.getVersion(interfaceClass, version); // 得到版本号
             if (revision != null && revision.length() > 0) {
-                map.put(REVISION_KEY, revision);
+                map.put(REVISION_KEY, revision); // revision
             }
 
             String[] methods = Wrapper.getWrapper(interfaceClass).getMethodNames();

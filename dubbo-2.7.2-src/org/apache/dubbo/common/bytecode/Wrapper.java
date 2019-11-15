@@ -103,7 +103,7 @@ public abstract class Wrapper {
      * @param c Class instance.
      * @return Wrapper instance(not null).
      */
-    public static Wrapper getWrapper(Class<?> c) {
+    public static Wrapper getWrapper(Class<?> c) { // interface com.kq.api.IDemoService
         while (ClassGenerator.isDynamicClass(c)) // can not wrapper on dynamic class.
         {
             c = c.getSuperclass();
@@ -114,8 +114,8 @@ public abstract class Wrapper {
         }
 
         Wrapper ret = WRAPPER_MAP.get(c);
-        if (ret == null) {
-            ret = makeWrapper(c);
+        if (ret == null) { //不存在 会进入这里  interface com.kq.api.IDemoService
+            ret = makeWrapper(c); // 生成包装类
             WRAPPER_MAP.put(c, ret);
         }
         return ret;

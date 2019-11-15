@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
+/** 服务提供对象
  * ProviderModel which is about published services
  */
 public class ProviderModel {
@@ -38,8 +38,8 @@ public class ProviderModel {
         }
 
         this.serviceName = serviceName; // com.kq.api.IDemoService:1.0.0
-        this.serviceInstance = serviceInstance; // DemoServiceImpl
-        this.serviceInterfaceClass = serviceInterfaceClass; //interface com.kq.api.IDemoService
+        this.serviceInstance = serviceInstance; // 实现类  服务提供对象:DemoServiceImpl
+        this.serviceInterfaceClass = serviceInterfaceClass; //服务提供接口 com.kq.api.IDemoService
 
         initMethod();
     }
@@ -79,7 +79,7 @@ public class ProviderModel {
     // 把导出方法 放到methodModels
     private void initMethod() {
         Method[] methodsToExport = null;
-        methodsToExport = this.serviceInterfaceClass.getMethods();
+        methodsToExport = this.serviceInterfaceClass.getMethods();  //得到该服务接口的所有public接口
 
         for (Method method : methodsToExport) {
             method.setAccessible(true);

@@ -474,7 +474,7 @@ public abstract class AbstractConfig implements Serializable {
         }
     }
 
-    /**
+    /** dubbo 基础属性 比如port server payload 等
      * Should be called after Config was fully initialized.
      * // FIXME: this method should be completely replaced by appendParameters
      *

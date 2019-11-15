@@ -17,12 +17,12 @@
 package org.apache.dubbo.rpc.model;
 
 import java.lang.reflect.Method;
-
+/** 服务提供方法模型 */
 public class ProviderMethodModel {
-    private transient final Method method;
-    private final String methodName;
-    private final String[] methodArgTypes;
-    private final String serviceName;
+    private transient final Method method; // public abstract java.lang.String com.kq.api.IDemoService.getMessage(java.lang.String)
+    private final String methodName; //getMessage 方法名
+    private final String[] methodArgTypes; //参数类型: java.lang.String
+    private final String serviceName; // com.kq.api.IDemoService:1.0.0
 
 
     public ProviderMethodModel(Method method, String serviceName) {

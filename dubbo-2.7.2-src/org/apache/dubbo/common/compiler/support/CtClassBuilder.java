@@ -81,7 +81,7 @@ public class CtClassBuilder {
             String pkgName = pkg.substring(0, pi);
             this.imports.add(pkgName);
             if (!pkg.endsWith(".*")) {
-                fullNames.put(pkg.substring(pi + 1), pkg);
+                fullNames.put(pkg.substring(pi + 1), pkg); //key: ExtensionLoader  value: org.apache.dubbo.common.extension.ExtensionLoader
             }
         }
     }
