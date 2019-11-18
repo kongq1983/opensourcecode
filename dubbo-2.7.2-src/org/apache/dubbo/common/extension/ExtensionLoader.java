@@ -725,9 +725,9 @@ public class ExtensionLoader<T> {
                     + clazz.getName() + " is not subtype of interface.");
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) { // 检测目标类上是否有 Adaptive 注解
-            cacheAdaptiveClass(clazz);
+            cacheAdaptiveClass(clazz);  // cachedAdaptiveClass = clazz
         } else if (isWrapperClass(clazz)) { //检测 clazz 是否是 Wrapper 类型 包装类  比如:org.apache.dubbo.rpc.proxy.wrapper.StubProxyFactoryWrapper
-            cacheWrapperClass(clazz);  //存储 clazz 到 cachedWrapperClasses 缓存中
+            cacheWrapperClass(clazz);  //cachedWrapperClasses.add(clazz);  存储 clazz 到 cachedWrapperClasses 缓存中
         } else {  // 程序进入此分支，表明 clazz 是一个普通的拓展类
             clazz.getConstructor(); // 检测 clazz 是否有默认的构造方法，如果没有，则抛出异常
             if (StringUtils.isEmpty(name)) {
@@ -739,7 +739,7 @@ public class ExtensionLoader<T> {
 
             String[] names = NAME_SEPARATOR.split(name);
             if (ArrayUtils.isNotEmpty(names)) {
-                cacheActivateClass(clazz, names[0]);
+                cacheActivateClass(clazz, names[0]); // cachedActivates.put(name, activate);
                 for (String n : names) {
                     cacheName(clazz, n); // 不存在 则 cachedNames.put(clazz, name);
                     saveInExtensionClass(extensionClasses, clazz, name); // extensionClasses.put(name, clazz)
