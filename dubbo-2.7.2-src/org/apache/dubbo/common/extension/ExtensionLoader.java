@@ -125,7 +125,7 @@ public class ExtensionLoader<T> {
 
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) {
-            EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
+            EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));  // 注意这里是new ExtensionLoader 这里有type注入
             loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         }
         return loader;
