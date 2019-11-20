@@ -240,7 +240,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
         if (ANY_VALUE.equals(name)) {
             return toRootPath();
         }
-        return toRootDir() + URL.encode(name);
+        return toRootDir() + URL.encode(name); // /dubbo/
     }
 
     private String[] toCategoriesPath(URL url) {
