@@ -268,10 +268,10 @@ public abstract class AnnotationConfigUtils {
 			ScopeMetadata metadata, BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
 
 		ScopedProxyMode scopedProxyMode = metadata.getScopedProxyMode();
-		if (scopedProxyMode.equals(ScopedProxyMode.NO)) {
+		if (scopedProxyMode.equals(ScopedProxyMode.NO)) { //不进行代理
 			return definition;
 		}
-		boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS);
+		boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS); // 基于类的代理模式(使用CGLIB)
 		return ScopedProxyCreator.createScopedProxy(definition, registry, proxyTargetClass);
 	}
 

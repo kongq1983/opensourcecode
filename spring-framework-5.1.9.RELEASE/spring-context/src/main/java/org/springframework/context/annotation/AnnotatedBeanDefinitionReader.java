@@ -130,7 +130,7 @@ public class AnnotatedBeanDefinitionReader {
 	 * @param annotatedClasses one or more annotated classes,
 	 * e.g. {@link Configuration @Configuration} classes
 	 */
-	public void register(Class<?>... annotatedClasses) {
+	public void register(Class<?>... annotatedClasses) { // 比如一些Configuration
 		for (Class<?> annotatedClass : annotatedClasses) {
 			registerBean(annotatedClass);
 		}

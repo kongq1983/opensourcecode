@@ -101,7 +101,7 @@ public final class SpringFactoriesLoader {
 		}
 		List<T> result = new ArrayList<>(factoryNames.size());
 		for (String factoryName : factoryNames) {
-			result.add(instantiateFactory(factoryName, factoryClass, classLoaderToUse));
+			result.add(instantiateFactory(factoryName, factoryClass, classLoaderToUse)); //初始化
 		}
 		AnnotationAwareOrderComparator.sort(result);
 		return result;
@@ -119,7 +119,7 @@ public final class SpringFactoriesLoader {
 	 */
 	public static List<String> loadFactoryNames(Class<?> factoryClass, @Nullable ClassLoader classLoader) {
 		String factoryClassName = factoryClass.getName();
-		return loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList());
+		return loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList()); //key: factoryClassName 默认值:Collections.emptyList()
 	}
 
 	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {

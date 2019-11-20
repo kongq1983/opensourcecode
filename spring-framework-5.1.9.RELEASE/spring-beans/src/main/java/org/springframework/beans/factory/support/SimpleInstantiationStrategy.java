@@ -59,8 +59,8 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 
 	@Override
 	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
-		// Don't override the class with CGLIB if no overrides.
-		if (!bd.hasMethodOverrides()) {
+		// Don't override the class with CGLIB if no overrides. 如果不存在方法覆写，那就使用 java 反射进行实例化，否则使用 CGLIB
+		if (!bd.hasMethodOverrides()) { //方法覆写 lookup-method 和 replaced-method 的介绍
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
@@ -84,10 +84,10 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
-			return BeanUtils.instantiateClass(constructorToUse);
+			return BeanUtils.instantiateClass(constructorToUse); //利用构造方法进行实例化
 		}
 		else {
-			// Must generate CGLIB subclass.
+			// Must generate CGLIB subclass. 存在方法覆写，利用 CGLIB 来完成实例化，需要依赖于CGLIB生成子类
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}

@@ -417,7 +417,7 @@ public class SpringApplication {
 		ClassLoader classLoader = getClassLoader();
 		// Use names and ensure unique to protect against duplicates
 		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
-		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names); // 初始化 放入列表，并返回
+		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names); // 初始化names对象  放入列表，并返回
 		AnnotationAwareOrderComparator.sort(instances);
 		return instances;
 	}

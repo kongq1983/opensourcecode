@@ -154,7 +154,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	static {
 		// Eagerly load the ContextClosedEvent class to avoid weird classloader issues
 		// on application shutdown in WebLogic 8.1. (Reported by Dustin Woods.)
-		ContextClosedEvent.class.getName();
+ 		ContextClosedEvent.class.getName();
 	}
 
 
@@ -515,41 +515,41 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// 准备刷新  Prepare this context for refreshing.
-			prepareRefresh();
-
+			prepareRefresh(); //下面一句 当然，这里说的 Bean 还没有初始化，只是配置信息都提取出来了
+			// 这步比较关键，这步完成后，配置文件就会解析成一个个 Bean 定义，注册到 BeanFactory
 			// 告诉子类刷新内部的bean工厂  Tell the subclass to refresh the internal bean factory.
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
-
+			// 上面一句  注册也只是将这些信息都保存到了注册中心(说到底核心是一个 beanName-> beanDefinition 的 map)
 			// Prepare the bean factory for use in this context.
-			prepareBeanFactory(beanFactory);
+			prepareBeanFactory(beanFactory); //设置 BeanFactory的类加载器，添加几个BeanPostProcessor，手动注册几个特殊的bean
 
-			try {
+			try { // 这里需要知道 BeanFactoryPostProcessor 这个知识点，Bean 如果实现了此接口 那么在容器初始化以后，Spring 会负责调用里面的 postProcessBeanFactory 方法
 				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory);
+				postProcessBeanFactory(beanFactory); // 这里是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有初始化
 
 				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory);
+				invokeBeanFactoryPostProcessors(beanFactory); // 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 方法
 
-				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory);
-
+				// Register bean processors that intercept bean creation. 注册 BeanPostProcessor 的实现类，注意看和 BeanFactoryPostProcessor 的区别
+				registerBeanPostProcessors(beanFactory); // 此接口两个方法: postProcessBeforeInitialization 和 postProcessAfterInitialization
+				// registerBeanPostProcessors : 两个方法分别在 Bean 初始化之前和初始化之后得到执行。注意，到这里 Bean 还没初始化
 				// Initialize message source for this context.
-				initMessageSource();
+				initMessageSource(); // 初始化当前 ApplicationContext 的 MessageSource
 
 				// Initialize event multicaster for this context.
-				initApplicationEventMulticaster();
+				initApplicationEventMulticaster(); // 初始化当前 ApplicationContext 的事件广播器
 
 				// Initialize other special beans in specific context subclasses.
-				onRefresh();
+				onRefresh(); // 模板方法 : 具体的子类可以在这里初始化一些特殊的 Bean（在初始化 singleton beans 之前）
 
 				// Check for listener beans and register them.
-				registerListeners();
+				registerListeners(); // 注册事件监听器，监听器需要实现 ApplicationListener 接口
 
-				// Instantiate all remaining (non-lazy-init) singletons.
-				finishBeanFactoryInitialization(beanFactory);
+				// Instantiate all remaining (non-lazy-init) singletons.  重点，重点，重点
+				finishBeanFactoryInitialization(beanFactory); // 初始化所有的 singleton beans(lazy-init 的除外）
 
 				// Last step: publish corresponding event.
-				finishRefresh();
+				finishRefresh(); // 最后，广播事件，ApplicationContext 初始化完成
 			}
 
 			catch (BeansException ex) {
@@ -559,7 +559,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
-				destroyBeans();
+				destroyBeans(); //销毁已经初始化的 singleton 的 Beans，以免有些 bean 会一直占用资源
 
 				// Reset 'active' flag.
 				cancelRefresh(ex);
@@ -842,17 +842,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 	}
 
-	/**
+	/** 会负责初始化剩下所有的 singleton beans
 	 * Finish the initialization of this context's bean factory,
 	 * initializing all remaining singleton beans.
-	 */
+	 */ /
 	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
 		// Initialize conversion service for this context.
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
 				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
-			beanFactory.setConversionService(
+			beanFactory.setConversionService( // 首先，初始化名字为 conversionService 的 Bean。需要掌握 ConversionService
 					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
-		}
+		} // 注意了，初始化的动作包装在 beanFactory.getBean(...) 中
 
 		// Register a default embedded value resolver if no bean post-processor
 		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
@@ -873,7 +873,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Allow for caching all bean definition metadata, not expecting further changes.
 		beanFactory.freezeConfiguration();
 
-		// Instantiate all remaining (non-lazy-init) singletons.
+		// Instantiate all remaining (non-lazy-init) singletons. 重点 重点 重点 初始化剩下的所有的非lazyInit的单例bean
 		beanFactory.preInstantiateSingletons();
 	}
 

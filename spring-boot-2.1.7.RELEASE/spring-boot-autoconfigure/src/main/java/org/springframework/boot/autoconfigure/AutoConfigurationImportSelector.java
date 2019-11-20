@@ -358,7 +358,7 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 
 	private static class AutoConfigurationGroup
 			implements DeferredImportSelector.Group, BeanClassLoaderAware, BeanFactoryAware, ResourceLoaderAware {
-
+		/** key: Configuration class名称  value: StandardAnnotationMetadata */
 		private final Map<String, AnnotationMetadata> entries = new LinkedHashMap<>();
 
 		private final List<AutoConfigurationEntry> autoConfigurationEntries = new ArrayList<>();

@@ -167,7 +167,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	/** Map of singleton-only bean names, keyed by dependency type.  key:Class value:多个bean名称*/
 	private final Map<Class<?>, String[]> singletonBeanNamesByType = new ConcurrentHashMap<>(64);
 
-	/** List of bean definition names, in registration order. */
+	/** List of bean definition names, in registration order. 根据添加时间排序 */
 	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
 
 	/** List of names of manually registered singletons, in registration order. */
@@ -820,9 +820,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Trigger initialization of all non-lazy singleton beans...
 		for (String beanName : beanNames) {
-			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
-			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
-				if (isFactoryBean(beanName)) { // FactoryBean
+			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName); //合并父Bean中的配置，注意 <bean id="" class="" parent="" /> 中的 parent
+			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) { //非抽象、非懒加载的 singletons。如果配置了 'abstract = true'，那是不需要初始化的
+				if (isFactoryBean(beanName)) { // 处理FactoryBean
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -841,7 +841,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						}
 					}
 				}
-				else { //非FactoryBean 正常Bean
+				else { //非FactoryBean 普通Bean 只要调用 getBean(beanName) 这个方法就可以进行初始化了
 					getBean(beanName);
 				}
 			}
@@ -916,10 +916,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
-		else {
-			if (hasBeanCreationStarted()) {// bean是否创建过了
+		else { // 判断是否已经有其他的 Bean 开始初始化了
+			if (hasBeanCreationStarted()) {// 注意，"注册Bean" 这个动作结束，Bean 依然还没有初始化
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
-				synchronized (this.beanDefinitionMap) {
+				synchronized (this.beanDefinitionMap) { // 在 Spring 容器启动的最后，会 预初始化 所有的 singleton beans
 					this.beanDefinitionMap.put(beanName, beanDefinition);
 					List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
 					updatedDefinitions.addAll(this.beanDefinitionNames);
@@ -928,13 +928,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					removeManualSingletonName(beanName);
 				}
 			}
-			else { // 以前没有创建过
+			else { // 以前没有创建过  容器还在启动过程中，未开始创建Bean，直接注册BeanDefinition
 				// Still in startup registration phase
-				this.beanDefinitionMap.put(beanName, beanDefinition);// key:bean名称 value:beanDefinition
-				this.beanDefinitionNames.add(beanName); //bean名称放入list
-				removeManualSingletonName(beanName);
-			}
-			this.frozenBeanDefinitionNames = null;
+				this.beanDefinitionMap.put(beanName, beanDefinition);//将BeanDefinition放到这个map中，key:bean名称 value:beanDefinition
+				this.beanDefinitionNames.add(beanName); //会按照bean配置的顺序保存每一个注册的Bean的名字
+				removeManualSingletonName(beanName); //这是个 LinkedHashSet，代表的是手动注册的 singleton bean
+			} // removeManualSingletonName 注意这里是 remove 方法，到这里的 Bean 当然不是手动注册的
+			this.frozenBeanDefinitionNames = null; // removeManualSingletonName Spring 会在后面"手动"注册一些 Bean，如 "environment"、"systemProperties" 等 bean
 		}
 
 		if (existingDefinition != null || containsSingleton(beanName)) {

@@ -308,7 +308,7 @@ public class ExtensionLoader<T> {
     // 不存在则创建Holder，存在则从cachedInstances里取
     private Holder<Object> getOrCreateHolder(String name) {
         Holder<Object> holder = cachedInstances.get(name);
-        if (holder == null) {
+        if (holder == null) { // Holder就一个value的值
             cachedInstances.putIfAbsent(name, new Holder<>());
             holder = cachedInstances.get(name);
         }
