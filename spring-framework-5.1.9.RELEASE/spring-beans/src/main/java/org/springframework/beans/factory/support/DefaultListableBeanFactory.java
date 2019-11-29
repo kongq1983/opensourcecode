@@ -916,7 +916,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
-		else { // 判断是否已经有其他的 Bean 开始初始化了
+		else { // 判断是否已经有其他的 Bean 开始初始化了  如果已启动注册状态则要加锁注册单例singleton
 			if (hasBeanCreationStarted()) {// 注意，"注册Bean" 这个动作结束，Bean 依然还没有初始化
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) { // 在 Spring 容器启动的最后，会 预初始化 所有的 singleton beans

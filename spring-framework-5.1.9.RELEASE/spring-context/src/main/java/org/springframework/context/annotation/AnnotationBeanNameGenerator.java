@@ -87,7 +87,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 	@Nullable
 	protected String determineBeanNameFromAnnotation(AnnotatedBeanDefinition annotatedDef) {
 		AnnotationMetadata amd = annotatedDef.getMetadata();
-		Set<String> types = amd.getAnnotationTypes();
+		Set<String> types = amd.getAnnotationTypes(); // 获取类上的所有注解 比如Service
 		String beanName = null;
 		for (String type : types) {
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
