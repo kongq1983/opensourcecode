@@ -29,7 +29,7 @@ import com.alibaba.csp.sentinel.slots.system.SystemSlot;
 
 /**
  * Builder for a default {@link ProcessorSlotChain}.
- *
+ * Slot是从第一个往后一直传递到最后一个的，且当信息传递到StatisticSlot时，这里就开始进行统计了，统计的结果又会被后续的Slot所采用，作为规则校验的依据
  * @author qinan.qn
  * @author leyou
  */

@@ -37,14 +37,14 @@ final class AuthorityRuleChecker {
 
         // Do exact match with origin name.
         int pos = rule.getLimitApp().indexOf(requester);
-        boolean contain = pos > -1;
+        boolean contain = pos > -1; //先大概匹配下，是否存在该存在该origin字符串
 
-        if (contain) {
+        if (contain) { //存在该origin
             boolean exactlyMatch = false;
             String[] appArray = rule.getLimitApp().split(",");
             for (String app : appArray) {
                 if (requester.equals(app)) {
-                    exactlyMatch = true;
+                    exactlyMatch = true; // 精确匹配
                     break;
                 }
             }
@@ -52,13 +52,13 @@ final class AuthorityRuleChecker {
             contain = exactlyMatch;
         }
 
-        int strategy = rule.getStrategy();
+        int strategy = rule.getStrategy(); //0: 白名单  1:黑名单
         if (strategy == RuleConstant.AUTHORITY_BLACK && contain) {
-            return false;
+            return false; //黑名单模式  并且origin在黑名单列表里  则不通过
         }
 
         if (strategy == RuleConstant.AUTHORITY_WHITE && !contain) {
-            return false;
+            return false;  //白名单模式 并且origin不在白名单列表里  则不通过
         }
 
         return true;

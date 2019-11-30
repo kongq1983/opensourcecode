@@ -150,8 +150,8 @@ public class ContextUtil {
                     }
                 }
             }
-            context = new Context(node, name);
-            context.setOrigin(origin);
+            context = new Context(node, name); //name:resourceName
+            context.setOrigin(origin); // origin: 黑白名单App
             contextHolder.set(context);
         }
 

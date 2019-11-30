@@ -61,12 +61,12 @@ public class Context {
      */
     private final String name;
 
-    /**
+    /** 当前调用链的根节点
      * The entrance node of current invocation tree.
      */
     private DefaultNode entranceNode;
 
-    /**
+    /** 当前的入口
      * Current processing entry.
      */
     private Entry curEntry;

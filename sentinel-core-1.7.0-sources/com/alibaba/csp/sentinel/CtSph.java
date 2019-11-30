@@ -128,11 +128,11 @@ public class CtSph implements Sph {
             context = InternalContextUtil.internalEnter(Constants.CONTEXT_DEFAULT_NAME);
         }
 
-        // Global switch is close, no rule checking will do.
+        // Global switch is close, no rule checking will do.  全局开关关闭，没有规则可检查
         if (!Constants.ON) {
             return new CtEntry(resourceWrapper, null, context);
         }
-
+        //获取该资源对应的 chain
         ProcessorSlot<Object> chain = lookProcessChain(resourceWrapper);
 
         /*
@@ -145,7 +145,7 @@ public class CtSph implements Sph {
 
         Entry e = new CtEntry(resourceWrapper, chain, context);
         try {
-            chain.entry(context, resourceWrapper, null, count, prioritized, args);
+            chain.entry(context, resourceWrapper, null, count, prioritized, args); // 执行chain的entry方法
         } catch (BlockException e1) {
             e.exit(count, args);
             throw e1;
@@ -197,7 +197,7 @@ public class CtSph implements Sph {
             synchronized (LOCK) {
                 chain = chainMap.get(resourceWrapper);
                 if (chain == null) {
-                    // Entry size limit.
+                    // Entry size limit.  超出最大容量不在创建
                     if (chainMap.size() >= Constants.MAX_SLOT_CHAIN_SIZE) {
                         return null;
                     }
@@ -311,7 +311,7 @@ public class CtSph implements Sph {
 
     @Override
     public Entry entry(String name, EntryType type, int count, Object... args) throws BlockException {
-        StringResourceWrapper resource = new StringResourceWrapper(name, type);
+        StringResourceWrapper resource = new StringResourceWrapper(name, type); // name: resourceName
         return entry(resource, count, args);
     }
 

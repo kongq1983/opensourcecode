@@ -25,17 +25,17 @@ package com.alibaba.csp.sentinel.slots.statistic.base;
 public class WindowWrap<T> {
 
     /**
-     * Time length of a single window bucket in milliseconds.
+     * 时间窗口的长度 Time length of a single window bucket in milliseconds.
      */
     private final long windowLengthInMs;
 
     /**
-     * Start timestamp of the window in milliseconds.
+     * 时间窗口的开始时间，单位是毫秒  Start timestamp of the window in milliseconds.
      */
     private long windowStart;
 
     /**
-     * Statistic data.
+     * 时间窗口的内容，在 WindowWrap 中是用泛型表示这个值的，但实际上就是 MetricBucket 类Statistic data.
      */
     private T value;
 
