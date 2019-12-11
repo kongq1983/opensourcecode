@@ -157,7 +157,7 @@ public abstract class AnnotationConfigUtils {
 				beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());
 			}
 		}
-
+		// registerPostProcessor 都是 this.beanDefinitionMap.put(beanName, beanDefinition);
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
 		// org.springframework.context.annotation.internalConfigurationAnnotationProcessor
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {

@@ -842,7 +842,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}
 				}
 				else { //非FactoryBean 普通Bean 只要调用 getBean(beanName) 这个方法就可以进行初始化了
-					getBean(beanName);
+ 					getBean(beanName);
 				}
 			}
 		}
@@ -869,7 +869,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	//---------------------------------------------------------------------
 	// Implementation of BeanDefinitionRegistry interface
 	//---------------------------------------------------------------------
-
+    /**  this.beanDefinitionMap.put(beanName, beanDefinition);  this.beanDefinitionNames.add(beanName); */
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
