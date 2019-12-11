@@ -39,9 +39,9 @@ import com.alibaba.csp.sentinel.util.TimeUtil;
  * @author Carpenter Lee
  */
 public abstract class LeapArray<T> {
-    /** 时间窗口的长度 */
-    protected int windowLengthInMs;
-    protected int sampleCount; // 采样窗口的个数
+    /** 时间窗口的长度   默认1000ms/2 = 500ms */
+    protected int windowLengthInMs; /** 采样窗口的个数 默认2*/
+    protected int sampleCount;  /** 以毫秒为单位的时间间隔 默认1000ms */
     protected int intervalInMs; // 以毫秒为单位的时间间隔
     /** 采样的时间窗口数组 */
     protected final AtomicReferenceArray<WindowWrap<T>> array;
@@ -54,8 +54,8 @@ public abstract class LeapArray<T> {
     /**
      * The total bucket count is: {@code sampleCount = intervalInMs / windowLengthInMs}.
      *
-     * @param sampleCount  bucket count of the sliding window
-     * @param intervalInMs the total time interval of this {@link LeapArray} in milliseconds
+     * @param sampleCount  bucket count of the sliding window 默认2
+     * @param intervalInMs the total time interval of this {@link LeapArray} in milliseconds 毫秒  1000ms = 1s
      */
     public LeapArray(int sampleCount, int intervalInMs) {
         AssertUtil.isTrue(sampleCount > 0, "bucket count is invalid: " + sampleCount);
@@ -63,7 +63,7 @@ public abstract class LeapArray<T> {
         AssertUtil.isTrue(intervalInMs % sampleCount == 0, "time span needs to be evenly divided");
 
         this.windowLengthInMs = intervalInMs / sampleCount;
-        this.intervalInMs = intervalInMs;
+        this.intervalInMs = intervalInMs;  //毫秒 ms
         this.sampleCount = sampleCount; // 时间窗口的采样个数，默认为2个采样窗口
 
         this.array = new AtomicReferenceArray<>(sampleCount);
@@ -100,9 +100,9 @@ public abstract class LeapArray<T> {
         // Calculate current index so we can map the timestamp to the leap array.
         return (int)(timeId % array.length()); // idx被分成[0,arrayLength-1]中的某一个数，作为array数组中的索引
     }
-
-    protected long calculateWindowStart(/*@Valid*/ long timeMillis) {
-        return timeMillis - timeMillis % windowLengthInMs;
+    /** 获得一个时间窗口  */
+    protected long calculateWindowStart(/*@Valid*/ long timeMillis) { /** currentTimeMillis=1575095617070  windowStart=1575095617000 */
+        return timeMillis - timeMillis % windowLengthInMs; // 1575095617070 - ((1575095617070 % 500)=70) = 1575095617000
     }
 
     /**
@@ -117,7 +117,7 @@ public abstract class LeapArray<T> {
         }
 
         int idx = calculateTimeIdx(timeMillis);
-        // Calculate current bucket start time.
+        // Calculate current bucket start time. currentTimeMillis=1575095617070  windowStart=1575095617000
         long windowStart = calculateWindowStart(timeMillis);
 
         /*
@@ -143,7 +143,7 @@ public abstract class LeapArray<T> {
                  * succeed to update, while other threads yield its time slice.
                  */
                 WindowWrap<T> window = new WindowWrap<T>(windowLengthInMs, windowStart, newEmptyBucket(timeMillis)); // 如果没有获取到，则创建一个新的
-                if (array.compareAndSet(idx, null, window)) { // 通过CAS将新窗口设置到数组中去
+                if (array.compareAndSet(idx, null, window)) { // 通过CAS将新窗口设置到数组中的pos=idx位置去
                     // Successfully updated, return the created bucket.
                     return window; //  如果能设置成功，则将该窗口返回
                 } else {

@@ -89,15 +89,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class StatisticNode implements Node {
 
-    /**
+    /** 秒 sampleCount:2  intervalInMs:1000ms
      * Holds statistics of the recent {@code INTERVAL} seconds. The {@code INTERVAL} is divided into time spans
      * by given {@code sampleCount}.
      */
     private transient volatile Metric rollingCounterInSecond = new ArrayMetric(SampleCountProperty.SAMPLE_COUNT,
         IntervalProperty.INTERVAL);
 
-    /**
-     * Holds statistics of the recent 60 seconds. The windowLengthInMs is deliberately set to 1000 milliseconds,
+    /**分钟 sampleCount:60  intervalInMs:60000ms
+     * Holds statistics of the recent 60 seconds. The windowLengthInMs  is deliberately set to 1000 milliseconds,
      * meaning each bucket per second, in this way we can get accurate statistics of each second.
      */
     private transient Metric rollingCounterInMinute = new ArrayMetric(60, 60 * 1000, false);
