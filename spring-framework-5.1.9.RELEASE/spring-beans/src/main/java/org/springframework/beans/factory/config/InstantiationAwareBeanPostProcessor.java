@@ -37,7 +37,7 @@ import org.springframework.lang.Nullable;
  * {@link BeanPostProcessor} interface as far as possible, or to derive from
  * {@link InstantiationAwareBeanPostProcessorAdapter} in order to be shielded
  * from extensions to this interface.
- *
+ * Instantiation : 实例化
  * @author Juergen Hoeller
  * @author Rod Johnson
  * @since 1.2

@@ -529,7 +529,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 	}
 
-	/**
+	/** 创建Bean 并初始化对象
 	 * Actually create the specified bean. Pre-creation processing has already happened
 	 * at this point, e.g. checking {@code postProcessBeforeInstantiation} callbacks.
 	 * <p>Differentiates between default bean instantiation, use of a
@@ -931,7 +931,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return (objectType.value != null && Object.class != objectType.value ? objectType.value : null);
 	}
 
-	/**
+	/**  三级缓存处理 SmartInstantiationAwareBeanPostProcessor
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
 	 * @param beanName the name of the bean (for error handling purposes)
