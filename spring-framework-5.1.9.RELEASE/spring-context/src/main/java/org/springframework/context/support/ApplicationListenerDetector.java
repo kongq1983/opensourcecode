@@ -68,12 +68,12 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) {
-		if (bean instanceof ApplicationListener) {
+		if (bean instanceof ApplicationListener) { //bean是ApplicationListener类型
 			// potentially not detected as a listener by getBeanNamesForType retrieval
-			Boolean flag = this.singletonNames.get(beanName);
-			if (Boolean.TRUE.equals(flag)) {
+			Boolean flag = this.singletonNames.get(beanName); //是否单例标志
+			if (Boolean.TRUE.equals(flag)) { //是否单例  true:单例
 				// singleton bean (top-level or inner): register on the fly
-				this.applicationContext.addApplicationListener((ApplicationListener<?>) bean);
+				this.applicationContext.addApplicationListener((ApplicationListener<?>) bean); //注册事件监听器
 			}
 			else if (Boolean.FALSE.equals(flag)) {
 				if (logger.isWarnEnabled() && !this.applicationContext.containsBean(beanName)) {
@@ -88,13 +88,13 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 		}
 		return bean;
 	}
-
+	/** 销毁对象之前 执行 */
 	@Override
 	public void postProcessBeforeDestruction(Object bean, String beanName) {
-		if (bean instanceof ApplicationListener) {
+		if (bean instanceof ApplicationListener) { // 如果bean ApplicationListener类型的
 			try {
 				ApplicationEventMulticaster multicaster = this.applicationContext.getApplicationEventMulticaster();
-				multicaster.removeApplicationListener((ApplicationListener<?>) bean);
+				multicaster.removeApplicationListener((ApplicationListener<?>) bean); // 删除该注册事件监听器
 				multicaster.removeApplicationListenerBean(beanName);
 			}
 			catch (IllegalStateException ex) {
@@ -102,7 +102,7 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 			}
 		}
 	}
-
+	/** 是否是ApplicationListener类型的 */
 	@Override
 	public boolean requiresDestruction(Object bean) {
 		return (bean instanceof ApplicationListener);

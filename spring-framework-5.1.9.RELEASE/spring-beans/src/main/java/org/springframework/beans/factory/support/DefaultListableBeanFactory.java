@@ -879,7 +879,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		if (beanDefinition instanceof AbstractBeanDefinition) {
 			try {
-				((AbstractBeanDefinition) beanDefinition).validate();
+				((AbstractBeanDefinition) beanDefinition).validate(); //验证MethodOverrides
 			}
 			catch (BeanDefinitionValidationException ex) {
 				throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,

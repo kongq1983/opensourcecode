@@ -244,7 +244,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 		// Eagerly check singleton cache for manually registered singletons. 检查下是不是已经创建过了
 		Object sharedInstance = getSingleton(beanName);
-		if (sharedInstance != null && args == null) {
+		if (sharedInstance != null && args == null) { // 以前没有创建  一级、二级、三级缓存都没有
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
 					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
@@ -257,7 +257,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
-		else {
+		else { // 全新的什么都没做
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference. 当前线程已经创建过了此 beanName 的 prototype 类型的 bean，那么抛异常
 			if (isPrototypeCurrentlyInCreation(beanName)) {
@@ -287,7 +287,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			if (!typeCheckOnly) {
-				markBeanAsCreated(beanName); // 将当前 beanName 放入一个 alreadyCreated 的 Set 集合中
+				markBeanAsCreated(beanName); // 标记已经创建   将当前 beanName 放入一个 alreadyCreated 的 Set 集合中
 			}
 
 			try {
@@ -1564,7 +1564,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 	}
 
-	/**
+	/** 将指定的bean标记为已经创建（或将要创建）
 	 * Mark the specified bean as already created (or about to be created).
 	 * <p>This allows the bean factory to optimize its caching for repeated
 	 * creation of the specified bean.
