@@ -135,8 +135,8 @@ public abstract class TransactionSynchronizationManager {
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
 	@Nullable
-	public static Object getResource(Object key) {
-		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key); //具体的DataSource
+	public static Object getResource(Object key) {  //key: DataSource对象
+		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key); //key: 具体的DataSource
 		Object value = doGetResource(actualKey); //具体的ConnectionHolder
 		if (value != null && logger.isTraceEnabled()) {
 			logger.trace("Retrieved value [" + value + "] for key [" + actualKey + "] bound to thread [" +
@@ -206,8 +206,8 @@ public abstract class TransactionSynchronizationManager {
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
 	public static Object unbindResource(Object key) throws IllegalStateException {
-		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
-		Object value = doUnbindResource(actualKey);
+		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key); //DataSource
+		Object value = doUnbindResource(actualKey); // ConnectionHolder
 		if (value == null) {
 			throw new IllegalStateException(
 					"No value for key [" + actualKey + "] bound to thread [" + Thread.currentThread().getName() + "]");
@@ -226,7 +226,7 @@ public abstract class TransactionSynchronizationManager {
 		return doUnbindResource(actualKey);
 	}
 
-	/**
+	/** 删除当前线程的数据库连接   key: DataSource  value:ConnectionHolder
 	 * Actually remove the value of the resource that is bound for the given key.
 	 */
 	@Nullable

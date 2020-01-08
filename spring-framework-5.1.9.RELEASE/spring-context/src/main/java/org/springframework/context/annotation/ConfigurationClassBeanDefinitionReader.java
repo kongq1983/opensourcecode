@@ -186,7 +186,7 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
-		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class);
+		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class); // 获取Bean注解属性的值
 		Assert.state(bean != null, "No @Bean annotation attributes");
 
 		// Consider name and any aliases

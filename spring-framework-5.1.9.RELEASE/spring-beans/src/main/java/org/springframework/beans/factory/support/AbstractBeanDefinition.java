@@ -762,7 +762,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		return this.lenientConstructorResolution;
 	}
 
-	/**
+	/** Bean所在的Configuration类
 	 * Specify the factory bean to use, if any.
 	 * This the name of the bean to call the specified factory method on.
 	 * @see #setFactoryMethodName

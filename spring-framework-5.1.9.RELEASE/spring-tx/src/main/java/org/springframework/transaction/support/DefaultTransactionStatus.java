@@ -114,7 +114,7 @@ public class DefaultTransactionStatus extends AbstractTransactionStatus {
 		return (hasTransaction() && this.newTransaction);
 	}
 
-	/**
+	/** 新的事物打开标记
 	 * Return if a new transaction synchronization has been opened
 	 * for this transaction.
 	 */

@@ -133,8 +133,8 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	 */
 	public DataSourceTransactionManager(DataSource dataSource) {
 		this();
-		setDataSource(dataSource);
-		afterPropertiesSet();
+		setDataSource(dataSource); // 特殊
+		afterPropertiesSet(); // 判断DataSource是否为空
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		try {
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
-				Connection newCon = obtainDataSource().getConnection();
+				Connection newCon = obtainDataSource().getConnection(); // 获得新的Connection
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
 				}
@@ -291,8 +291,8 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
-			// Bind the connection holder to the thread.
-			if (txObject.isNewConnectionHolder()) {
+			// Bind the connection holder to the thread.  把ConnectionHolder绑定到当前线程 绑定的是map
+			if (txObject.isNewConnectionHolder()) { //Map<Object, Object> map  (key:DataSource value: ConnectionHolder )
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
 		}
@@ -326,7 +326,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Committing JDBC transaction on Connection [" + con + "]");
 		}
 		try {
-			con.commit();
+			con.commit(); // 事物提交
 		}
 		catch (SQLException ex) {
 			throw new TransactionSystemException("Could not commit JDBC transaction", ex);
