@@ -339,7 +339,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	@Override
 	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException {
-		Object transaction = doGetTransaction();
+		Object transaction = doGetTransaction(); // 获取事务
 
 		// Cache debug flag to avoid repeated checks.
 		boolean debugEnabled = logger.isDebugEnabled();
@@ -347,7 +347,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		if (definition == null) {
 			// Use defaults if no transaction definition given.
 			definition = new DefaultTransactionDefinition();
-		}
+		} // 如果存在当前事务 则根据事务定义中的传播行为来进行处理
 		/** connectionHolder != null && transactionActive==true */
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
@@ -358,22 +358,22 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		if (definition.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", definition.getTimeout());
 		}
-
+        // 当前不存在事务，则根据事务定义中的传播行为来决定如何处理
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
-			throw new IllegalTransactionStateException(
+			throw new IllegalTransactionStateException( // 如果传播行为一定要有事务存在，则抛出异常
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
-		}
+		} // 如果这3种行为，则创建事务
 		else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
-			SuspendedResourcesHolder suspendedResources = suspend(null);
+			SuspendedResourcesHolder suspendedResources = suspend(null); // 挂起当前事务
 			if (debugEnabled) {
 				logger.debug("Creating new transaction with name [" + definition.getName() + "]: " + definition);
 			}
-			try {
+			try { // 新的同步
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
-				DefaultTransactionStatus status = newTransactionStatus(
+				DefaultTransactionStatus status = newTransactionStatus( // 挂起事务
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 				doBegin(transaction, definition); //开启事务
 				prepareSynchronization(status, definition);
