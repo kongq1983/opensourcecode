@@ -77,7 +77,7 @@ import org.springframework.util.Assert;
 public abstract class TransactionSynchronizationManager {
 
 	private static final Log logger = LogFactory.getLog(TransactionSynchronizationManager.class);
-
+	/** ConnectionHolder 持有者 key: DataSource   value: ConnectionHolder*/
 	private static final ThreadLocal<Map<Object, Object>> resources =
 			new NamedThreadLocal<>("Transactional resources");
 

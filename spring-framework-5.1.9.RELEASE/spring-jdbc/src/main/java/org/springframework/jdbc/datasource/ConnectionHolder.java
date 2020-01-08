@@ -52,7 +52,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	/** 当前Connection */
 	@Nullable
 	private Connection currentConnection;
-	/** 事务激活标志 */
+	/** 事务激活标志 只有在doBegin设置true 获取新的Connection的时候 */
 	private boolean transactionActive = false;
 
 	@Nullable

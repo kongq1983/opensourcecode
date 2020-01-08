@@ -231,12 +231,12 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	public Object getResourceFactory() {
 		return obtainDataSource();
 	}
-	/** DataSourceTransactionObject */
+	/** DataSourceTransactionObject   newConnectionHolder : false*/
 	@Override
 	protected Object doGetTransaction() {
-		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		DataSourceTransactionObject txObject = new DataSourceTransactionObject(); // 每个方法都一个新的
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
-		ConnectionHolder conHolder =
+		ConnectionHolder conHolder = // 连接先获取当前的ConnectionHolder ， 如果是需要新的 到时候会创建新的ConnectionHolder
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
@@ -256,7 +256,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
 		Connection con = null;
 
-		try {
+		try { // 当前线程没有持有ConnectionHolder 或者  持有ConnectionHolder并且synchronizedWithTransaction=true
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
 				Connection newCon = obtainDataSource().getConnection(); // 获得新的Connection
@@ -284,7 +284,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			}
 
 			prepareTransactionalConnection(con, definition);
-			txObject.getConnectionHolder().setTransactionActive(true); // 事务激活标志
+			txObject.getConnectionHolder().setTransactionActive(true); // 事务激活标志 只有在doBegin设置true
 
 			int timeout = determineTimeout(definition); // 默认-1
 			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) { // 不等于-1 设置超时时间
@@ -305,7 +305,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			throw new CannotCreateTransactionException("Could not open JDBC Connection for transaction", ex);
 		}
 	}
-
+	/** 挂起  当前线程设置ConnectionHolder为null */
 	@Override
 	protected Object doSuspend(Object transaction) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;

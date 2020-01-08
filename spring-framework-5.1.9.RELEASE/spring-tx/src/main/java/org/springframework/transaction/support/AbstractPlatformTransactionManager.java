@@ -347,13 +347,13 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		if (definition == null) {
 			// Use defaults if no transaction definition given.
 			definition = new DefaultTransactionDefinition();
-		} // 如果存在当前事务 则根据事务定义中的传播行为来进行处理
+		} // 如果存在当前事务 则根据事务定义中的传播行为来进行处理  transactionActive 在doBegin那边设置 也就是开启事务的时候 设置为true
 		/** connectionHolder != null && transactionActive==true */
-		if (isExistingTransaction(transaction)) {
+		if (isExistingTransaction(transaction)) { // (txObject.hasConnectionHolder() && txObject.getConnectionHolder().isTransactionActive())
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(definition, transaction, debugEnabled);
 		}
-
+		// 没有事务 往下走  有事务 不会走下面的
 		// Check definition settings for new transaction.
 		if (definition.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", definition.getTimeout());
@@ -371,8 +371,8 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			if (debugEnabled) {
 				logger.debug("Creating new transaction with name [" + definition.getName() + "]: " + definition);
 			}
-			try { // 新的同步
-				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+			try { // 新的同步 注意newSynchronization这里是true   transaction!=null && newTransaction=true 会自动提交事务
+				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER); //第一次 这个是true  transactionSynchronization=0
 				DefaultTransactionStatus status = newTransactionStatus( // 挂起事务
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 				doBegin(transaction, definition); //开启事务
@@ -490,7 +490,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 							definition + "] is not marked as read-only but existing transaction is");
 				}
 			}
-		}
+		} // 注意PROPAGATION_REQUIRED 会到这里（CommonServiceImpl.insert 是newTransaction=true）   UserService.insert 是newTransaction=false 也就是commit不会提交
 		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 		return prepareTransactionStatus(definition, transaction, false, newSynchronization, debugEnabled, null);
 	}
@@ -574,7 +574,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			try {
 				Object suspendedResources = null; //挂起的资源  CollectionHolder
 				if (transaction != null) {
-					suspendedResources = doSuspend(transaction);
+					suspendedResources = doSuspend(transaction); //当前线程设置ConnectionHolder为null ，并且返回当前线程的持有ConnectionHolder对象
 				}
 				String name = TransactionSynchronizationManager.getCurrentTransactionName(); //比如: 当前线程得到com.kq.jdbc1.service.impl.AccountServiceImpl.insert2
 				TransactionSynchronizationManager.setCurrentTransactionName(null); //当前线程 清空
@@ -599,7 +599,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			return new SuspendedResourcesHolder(suspendedResources);
 		}
 		else {
-			// Neither transaction nor synchronization active.
+			// Neither transaction nor synchronization active. 第一次
 			return null;
 		}
 	}
@@ -743,7 +743,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 						logger.debug("Initiating transaction commit");
 					}
 					unexpectedRollback = status.isGlobalRollbackOnly();
-					doCommit(status);
+					doCommit(status); //事务提交
 				}
 				else if (isFailEarlyOnGlobalRollbackOnly()) {
 					unexpectedRollback = status.isGlobalRollbackOnly();
@@ -835,7 +835,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					if (status.isDebug()) {
 						logger.debug("Initiating transaction rollback");
 					}
-					doRollback(status);
+					doRollback(status); // 新事务 则回滚
 				}
 				else {
 					// Participating in larger transaction
@@ -1011,7 +1011,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				logger.debug("Resuming suspended transaction after completion of inner transaction");
 			}
 			Object transaction = (status.hasTransaction() ? status.getTransaction() : null);
-			resume(transaction, (SuspendedResourcesHolder) status.getSuspendedResources());
+			resume(transaction, (SuspendedResourcesHolder) status.getSuspendedResources()); // 恢复
 		}
 	}
 
