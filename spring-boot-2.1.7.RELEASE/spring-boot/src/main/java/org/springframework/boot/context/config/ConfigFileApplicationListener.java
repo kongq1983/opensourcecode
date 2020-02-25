@@ -171,7 +171,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	/** 从spring.factories加载 所有的EnvironmentPostProcessor  并执行postProcessEnvironment方法 */
 	private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
 		List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
-		postProcessors.add(this);
+		postProcessors.add(this); // ConfigFileApplicationListener是一个EnvironmentPostProcessor
 		AnnotationAwareOrderComparator.sort(postProcessors);
 		for (EnvironmentPostProcessor postProcessor : postProcessors) {
 			postProcessor.postProcessEnvironment(event.getEnvironment(), event.getSpringApplication());
@@ -477,8 +477,8 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		private void load(PropertySourceLoader loader, String location, Profile profile, DocumentFilter filter,
 				DocumentConsumer consumer) {
 			try {
-				Resource resource = this.resourceLoader.getResource(location);
-				if (resource == null || !resource.exists()) {
+				Resource resource = this.resourceLoader.getResource(location); // 比如 URL [file:./config/application.properties]
+				if (resource == null || !resource.exists()) { //不存在该配置文件 会进入
 					if (this.logger.isTraceEnabled()) {
 						StringBuilder description = getDescription("Skipped missing config ", location, resource,
 								profile);

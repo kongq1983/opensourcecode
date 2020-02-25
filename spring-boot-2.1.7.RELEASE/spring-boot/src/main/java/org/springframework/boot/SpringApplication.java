@@ -487,9 +487,9 @@ public class SpringApplication {
 		if (this.defaultProperties != null && !this.defaultProperties.isEmpty()) {
 			sources.addLast(new MapPropertySource("defaultProperties", this.defaultProperties));
 		}
-		if (this.addCommandLineProperties && args.length > 0) {
+		if (this.addCommandLineProperties && args.length > 0) { // 有命令行参数 比如--server.port=11003
 			String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME;
-			if (sources.contains(name)) {
+			if (sources.contains(name)) { // 判断有没有存在名称=name的PropertySource
 				PropertySource<?> source = sources.get(name);
 				CompositePropertySource composite = new CompositePropertySource(name);
 				composite.addPropertySource(
