@@ -168,7 +168,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			onApplicationPreparedEvent(event);
 		}
 	}
-
+	/** 从spring.factories加载 所有的EnvironmentPostProcessor  并执行postProcessEnvironment方法 */
 	private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
 		List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
 		postProcessors.add(this);
@@ -177,7 +177,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			postProcessor.postProcessEnvironment(event.getEnvironment(), event.getSpringApplication());
 		}
 	}
-
+	/** 从spring.factories加载 所有的EnvironmentPostProcessor  */
 	List<EnvironmentPostProcessor> loadPostProcessors() {
 		return SpringFactoriesLoader.loadFactories(EnvironmentPostProcessor.class, getClass().getClassLoader());
 	}

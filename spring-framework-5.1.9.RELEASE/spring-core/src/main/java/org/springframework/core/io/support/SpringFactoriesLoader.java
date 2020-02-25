@@ -121,7 +121,7 @@ public final class SpringFactoriesLoader {
 		String factoryClassName = factoryClass.getName();
 		return loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList()); //key: factoryClassName 默认值:Collections.emptyList()
 	}
-
+	/** key:是spring.factories的key    value:是根据key分组，把同个key的不同value放到list里面 */
 	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
 		MultiValueMap<String, String> result = cache.get(classLoader);
 		if (result != null) { //已经处理过了  直接返回
@@ -140,7 +140,7 @@ public final class SpringFactoriesLoader {
 				for (Map.Entry<?, ?> entry : properties.entrySet()) { // key: spring.factories的key  value: spring.factories的value
 					String factoryClassName = ((String) entry.getKey()).trim(); // spring.factories的key
 					for (String factoryName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {//value根据逗号，分隔
-						result.add(factoryClassName, factoryName.trim()); //MultiValueMap value有多个
+						result.add(factoryClassName, factoryName.trim()); //factoryClassName其实就是spring.factories的key   由于value是List类型 MultiValueMap value有多个
 					}
 				}
 			}

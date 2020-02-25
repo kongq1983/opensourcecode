@@ -266,7 +266,7 @@ public class SpringApplication {
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources)); // 这里就是SpringMvcApplication的实例
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();// deduce(推断)web类型(servlet、reactive、NoWeb)
-		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));// 找到*META-INF/spring.factories*中声明的所有ApplicationContextInitializer的实现类并将其实例化
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));// 这里会处理加载所有的spring.factories文件的内容到缓存 找到*META-INF/spring.factories*中声明的所有ApplicationContextInitializer的实现类并将其实例化
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class)); //找到*META-INF/spring.factories*中声明的所有ApplicationListener的实现类并将其实例化
 		this.mainApplicationClass = deduceMainApplicationClass(); //获得当前执行main方法的类对象，这里就是SpringMvcApplication的实例
 	}
@@ -1192,7 +1192,7 @@ public class SpringApplication {
 		return asUnmodifiableOrderedSet(this.listeners);
 	}
 
-	/**
+	/** 具体的类
 	 * Static helper that can be used to run a {@link SpringApplication} from the
 	 * specified source using default settings.
 	 * @param primarySource the primary source to load
@@ -1203,7 +1203,7 @@ public class SpringApplication {
 		return run(new Class<?>[] { primarySource }, args);
 	}
 
-	/**
+	/** 数组
 	 * Static helper that can be used to run a {@link SpringApplication} from the
 	 * specified sources using default settings and user supplied arguments.
 	 * @param primarySources the primary sources to load
