@@ -115,12 +115,12 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 	private static final Bindable<String[]> STRING_ARRAY = Bindable.of(String[].class);
 
-	/**
+	/** 比如 dev、test、prod
 	 * The "active profiles" property name.
 	 */
 	public static final String ACTIVE_PROFILES_PROPERTY = "spring.profiles.active";
 
-	/**
+	/** 比如 spring.profiles.include: devDb,devMongodb,devRedis  同时激活dev的数据库配置文件，mongodb配置文件，缓存服务器配置文件
 	 * The "includes profiles" property name.
 	 */
 	public static final String INCLUDE_PROFILES_PROPERTY = "spring.profiles.include";
@@ -200,7 +200,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	 */
 	protected void addPropertySources(ConfigurableEnvironment environment, ResourceLoader resourceLoader) {
 		RandomValuePropertySource.addToEnvironment(environment);
-		new Loader(environment, resourceLoader).load();
+		new Loader(environment, resourceLoader).load(); // 默认情况下 这里加载application开头的资源文件
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			this.placeholdersResolver = new PropertySourcesPlaceholdersResolver(this.environment);
 			this.resourceLoader = (resourceLoader != null) ? resourceLoader : new DefaultResourceLoader();
 			this.propertySourceLoaders = SpringFactoriesLoader.loadFactories(PropertySourceLoader.class,
-					getClass().getClassLoader());  //YamlPropertySourceLoader  PropertiesPropertySourceLoader
+					getClass().getClassLoader());  //YamlPropertySourceLoader(application.yml application.yaml)  PropertiesPropertySourceLoader(处理application.properties application.xml)
 		}
 
 		public void load() {
@@ -601,13 +601,13 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			}
 			this.environment.addActiveProfile(profile);
 		}
-
+		/** 未配置目录  默认使用 classpath:/,classpath:/config/,file:./,file:./config/ */
 		private Set<String> getSearchLocations() {
-			if (this.environment.containsProperty(CONFIG_LOCATION_PROPERTY)) {
+			if (this.environment.containsProperty(CONFIG_LOCATION_PROPERTY)) { // 是否配置 spring.config.location
 				return getSearchLocations(CONFIG_LOCATION_PROPERTY);
 			}
-			Set<String> locations = getSearchLocations(CONFIG_ADDITIONAL_LOCATION_PROPERTY);
-			locations.addAll(
+			Set<String> locations = getSearchLocations(CONFIG_ADDITIONAL_LOCATION_PROPERTY); // spring.config.additional-location
+			locations.addAll( // 未配置目录  默认使用 classpath:/,classpath:/config/,file:./,file:./config/
 					asResolvedSet(ConfigFileApplicationListener.this.searchLocations, DEFAULT_SEARCH_LOCATIONS));
 			return locations;
 		}
@@ -656,7 +656,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		}
 
 		private void addLoadedPropertySources() {
-			MutablePropertySources destination = this.environment.getPropertySources();
+			MutablePropertySources destination = this.environment.getPropertySources(); //spring到现在为止的PropertySource
 			List<MutablePropertySources> loaded = new ArrayList<>(this.loaded.values());
 			Collections.reverse(loaded);
 			String lastAdded = null;
