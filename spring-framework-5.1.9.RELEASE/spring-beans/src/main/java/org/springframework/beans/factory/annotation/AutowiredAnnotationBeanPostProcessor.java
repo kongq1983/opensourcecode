@@ -665,7 +665,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					currDesc.setContainingClass(bean.getClass());
 					descriptors[i] = currDesc;
 					try {
-						Object arg = beanFactory.resolveDependency(currDesc, beanName, autowiredBeans, typeConverter);
+						Object arg = beanFactory.resolveDependency(currDesc, beanName, autowiredBeans, typeConverter); // 得到@Value的值
 						if (arg == null && !this.required) {
 							arguments = null;
 							break;

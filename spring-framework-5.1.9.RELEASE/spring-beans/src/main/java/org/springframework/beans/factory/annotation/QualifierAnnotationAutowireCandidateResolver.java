@@ -340,14 +340,14 @@ public class QualifierAnnotationAutowireCandidateResolver extends GenericTypeAwa
 		return false;
 	}
 
-	/**
+	/** 得到@Value注解的value  比如${server.port}
 	 * Determine whether the given dependency declares a value annotation.
 	 * @see Value
 	 */
 	@Override
 	@Nullable
 	public Object getSuggestedValue(DependencyDescriptor descriptor) {
-		Object value = findValue(descriptor.getAnnotations());
+		Object value = findValue(descriptor.getAnnotations()); //@Value注解的value  比如${server.port}
 		if (value == null) {
 			MethodParameter methodParam = descriptor.getMethodParameter();
 			if (methodParam != null) {
