@@ -661,8 +661,8 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			Collections.reverse(loaded); //反转
 			String lastAdded = null;
 			Set<String> added = new HashSet<>();
-			for (MutablePropertySources sources : loaded) {
-				for (PropertySource<?> source : sources) {
+			for (MutablePropertySources sources : loaded) { //比如file:config/application-prod.yml
+				for (PropertySource<?> source : sources) { // 其他目录加载的profile=prod的配置文件  比如classpath:application-prod.prperties等
 					if (added.add(source.getName())) {
 						addLoadedPropertySource(destination, lastAdded, source);
 						lastAdded = source.getName();

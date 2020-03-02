@@ -299,7 +299,7 @@ public class SpringApplication {
 		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
 		configureHeadlessProperty(); //这是设置系统属性java.awt.headless
 		SpringApplicationRunListeners listeners = getRunListeners(args); //获取到 META-INF/spring.factories中配置的SpringApplicationRunListener
-		listeners.starting();// 发送事件  org.springframework.boot.context.event.ApplicationStartingEvent
+		listeners.starting();// 这里是org.springframework.boot.context.event.EventPublishingRunListener.EventPublishingRunListener 发送事件  org.springframework.boot.context.event.ApplicationStartingEvent
 		try { //命令行参数包装为了ApplicationArguments
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments); //准备好了Environment，此刻Environment中都有哪些配置参数
@@ -309,7 +309,7 @@ public class SpringApplication {
 			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,// 得到所有的FailureAnalyzer
 					new Class[] { ConfigurableApplicationContext.class }, context); // 获取到 META-INF/spring.factories中配置的SpringBootExceptionReporter
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner); //准备ApplicationContext
-			refreshContext(context); // 刷新ApplicationContext
+			refreshContext(context); // 刷新ApplicationContext  会启动Server 比如Tomcat、Jetty
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {

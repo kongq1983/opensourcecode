@@ -88,7 +88,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 */
 	public static final String DEFAULT_PROFILES_PROPERTY_NAME = "spring.profiles.default";
 
-	/**
+	/** 通过default 可以通过spring.profiles.default指定默认的profile名称
 	 * Name of reserved default profile name: {@value}. If no default profile names are
 	 * explicitly and no active profile names are explicitly set, this profile will
 	 * automatically be activated by default.
@@ -104,7 +104,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private final Set<String> activeProfiles = new LinkedHashSet<>();
-
+	/** 默认 default 1个*/
 	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles());
 
 	private final MutablePropertySources propertySources = new MutablePropertySources();
@@ -203,7 +203,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	protected void customizePropertySources(MutablePropertySources propertySources) {
 	}
 
-	/**
+	/**  返回default(profile)的列表
 	 * Return the set of reserved default profile names. This implementation returns
 	 * {@value #RESERVED_DEFAULT_PROFILE_NAME}. Subclasses may override in order to
 	 * customize the set of reserved names.
