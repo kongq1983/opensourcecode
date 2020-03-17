@@ -467,7 +467,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	// Implementation of relevant AbstractBeanFactory template methods
 	//---------------------------------------------------------------------
 
-	/**
+	/** 重点doCreateBean
 	 * Central method of this class: creates a bean instance,
 	 * populates the bean instance, applies post-processors, etc.
 	 * @see #doCreateBean
@@ -575,15 +575,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Eagerly cache singletons to be able to resolve circular references
-		// even when triggered by lifecycle interfaces like BeanFactoryAware.
+		// even when triggered by lifecycle interfaces like BeanFactoryAware. allowCircularReferences是否允许循环依赖
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
-				isSingletonCurrentlyInCreation(beanName));
+				isSingletonCurrentlyInCreation(beanName)); // 是否在singletonsCurrentlyInCreation创建队列里
 		if (earlySingletonExposure) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); //放入三级缓存 singletonFactories 非单例的，就不会预加载
+			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); //这里只放入三级缓存 singletonFactories 非单例的，就不会预加载
 		}
 
 		// Initialize the bean instance.
@@ -602,8 +602,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		if (earlySingletonExposure) {
-			Object earlySingletonReference = getSingleton(beanName, false);
+		if (earlySingletonExposure) { //(mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName))
+			Object earlySingletonReference = getSingleton(beanName, false);  // 已经放入创建队列情况下  从一级或者二级缓存取
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
@@ -931,7 +931,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return (objectType.value != null && Object.class != objectType.value ? objectType.value : null);
 	}
 
-	/**  三级缓存处理 SmartInstantiationAwareBeanPostProcessor
+	/**  三级缓存处理 SmartInstantiationAwareBeanPostProcessor  singletonFactories里面做了一些额外操作吧  三级缓存好处是可扩展
 	 * Obtain a reference for early access to the specified bean,
 	 * typically for the purpose of resolving a circular reference.
 	 * @param beanName the name of the bean (for error handling purposes)
@@ -1193,7 +1193,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return autowireConstructor(beanName, mbd, ctors, null);
 		}
 
-		// No special handling: simply use no-arg constructor.  没有参数的构造函数初始化
+		// No special handling: simply use no-arg constructor.  默认构造函数初始化  没有参数的构造函数初始化
 		return instantiateBean(beanName, mbd); // 调用无参构造函数
 	}
 
@@ -1295,7 +1295,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent); //实例化
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
-			initBeanWrapper(bw);
+			initBeanWrapper(bw); // 设置ConversionService   注册PropertyEditor
 			return bw;
 		}
 		catch (Throwable ex) {
@@ -1406,10 +1406,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				pvs = mbd.getPropertyValues();
 			}
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
-				if (bp instanceof InstantiationAwareBeanPostProcessor) {
+				if (bp instanceof InstantiationAwareBeanPostProcessor) { // 如果@Autowired标注，走到AutowiredAnnotationBeanPostProcessor这个Processor 会进入到postProcessProperties方法
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
-					if (pvsToUse == null) {
+					if (pvsToUse == null) { // 上面@Autowired注解 会调用AutowiredAnnotationBeanPostProcessor.postProcessProperties
 						if (filteredPds == null) {
 							filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 						}

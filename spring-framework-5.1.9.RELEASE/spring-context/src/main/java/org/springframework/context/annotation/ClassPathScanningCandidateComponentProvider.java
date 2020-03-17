@@ -412,7 +412,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 		}
 		return candidates;
 	}
-	/** 所有的 找到注解Bean */
+	/** 找到所有标注@Component注解的Bean */
 	private Set<BeanDefinition> scanCandidateComponents(String basePackage) {
 		Set<BeanDefinition> candidates = new LinkedHashSet<>();
 		try { // classpath*:com/kq/mybatis/mapper/**/*.class
@@ -432,7 +432,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setResource(resource);
 							sbd.setSource(resource);
-							if (isCandidateComponent(sbd)) {
+							if (isCandidateComponent(sbd)) { // 是否标注@Component   @Service也是@Component
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
 								}

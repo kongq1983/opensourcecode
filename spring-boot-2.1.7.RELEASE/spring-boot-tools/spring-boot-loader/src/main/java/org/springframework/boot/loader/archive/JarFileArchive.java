@@ -34,7 +34,7 @@ import java.util.jar.Manifest;
 
 import org.springframework.boot.loader.jar.JarFile;
 
-/**
+/** 基于java.util.jar.JarEntry实现
  * {@link Archive} implementation backed by a {@link JarFile}.
  *
  * @author Phillip Webb

@@ -34,7 +34,7 @@ public class WarLauncher extends ExecutableArchiveLauncher {
 	private static final String WEB_INF_CLASSES = WEB_INF + "classes/";
 
 	private static final String WEB_INF_LIB = WEB_INF + "lib/";
-
+	/** 存放的是maven scope=provided的jar */
 	private static final String WEB_INF_LIB_PROVIDED = WEB_INF + "lib-provided/";
 
 	public WarLauncher() {

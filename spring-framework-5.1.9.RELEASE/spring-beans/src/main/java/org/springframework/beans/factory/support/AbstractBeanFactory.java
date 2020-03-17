@@ -230,7 +230,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param requiredType the required type of the bean to retrieve
 	 * @param args arguments to use when creating a bean instance using explicit arguments
 	 * (only applied when creating a new instance as opposed to retrieving an existing one)
-	 * @param typeCheckOnly whether the instance is obtained for a type check,
+	 * @param typeCheckOnly whether the instance is obtained for a type check,    typeCheckOnly=false 会把当前beanName放到创建队列里
 	 * not for actual use
 	 * @return an instance of the bean
 	 * @throws BeansException if the bean could not be created
@@ -243,7 +243,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons. 检查下是不是已经创建过了
-		Object sharedInstance = getSingleton(beanName);
+		Object sharedInstance = getSingleton(beanName); // allowEarlyReference=true  第一次不在创建队列里
 		if (sharedInstance != null && args == null) { // 以前没有创建  一级、二级、三级缓存都没有
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
@@ -265,7 +265,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			// Check if bean definition exists in this factory.
-			BeanFactory parentBeanFactory = getParentBeanFactory();
+			BeanFactory parentBeanFactory = getParentBeanFactory(); // 获取父对象Bean 除非SpringMvc 否则这里parentBeanFactory=null  直接去下一步
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 				// Not found -> check parent.
 				String nameToLookup = originalBeanName(name);
@@ -287,7 +287,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			if (!typeCheckOnly) {
-				markBeanAsCreated(beanName); // 标记已经创建   将当前 beanName 放入一个 alreadyCreated 的 Set 集合中
+				markBeanAsCreated(beanName); //这里才标记  标记已经创建   将当前 beanName 放入一个 alreadyCreated 的 Set 集合中
 			}
 
 			try {
@@ -314,10 +314,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance. 创建 singleton 的实例
-				if (mbd.isSingleton()) {
-					sharedInstance = getSingleton(beanName, () -> {
+				if (mbd.isSingleton()) { //是否单例 注意下面是否先执行()-> 代码 也就是ObjectFactory
+					sharedInstance = getSingleton(beanName, () -> { //单例情况下  这里会把单例实例放到一级缓存 先调用getSingleton 然后调用createBean
 						try {
-							return createBean(beanName, mbd, args);
+							return createBean(beanName, mbd, args); // singletonFactory.getObject() 调用的时候 执行这里 getSingleton(String beanName, ObjectFactory<?> singletonFactory)
 						}
 						catch (BeansException ex) {
 							// Explicitly remove instance from singleton cache: It might have been put there
@@ -330,7 +330,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 
-				else if (mbd.isPrototype()) {
+				else if (mbd.isPrototype()) { // prototype 每次都创建
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
 					try {

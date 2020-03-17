@@ -40,7 +40,7 @@ public class JarLauncher extends ExecutableArchiveLauncher {
 		super(archive);
 	}
 
-	@Override
+	@Override //返回false 说明fat jar 被解压至文件目录
 	protected boolean isNestedArchive(Archive.Entry entry) {
 		if (entry.isDirectory()) {
 			return entry.getName().equals(BOOT_INF_CLASSES);

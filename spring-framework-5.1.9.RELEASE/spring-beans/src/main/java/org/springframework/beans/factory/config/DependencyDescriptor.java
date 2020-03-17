@@ -258,7 +258,7 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 		return null;
 	}
 
-	/**
+	/** A引用B   B引用A  先初始化A  然后A的属性注入B的时候  初始化B  然后B注入A 的时候 调用 这里beanName是A
 	 * Resolve the specified bean name, as a candidate result of the matching
 	 * algorithm for this dependency, to a bean instance from the given factory.
 	 * <p>The default implementation calls {@link BeanFactory#getBean(String)}.

@@ -886,7 +886,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						"Validation of bean definition failed", ex);
 			}
 		}
-
+		// 第一步 spring自动注册的  existingDefinition一开始=null
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) {
 			if (!isAllowBeanDefinitionOverriding()) {
@@ -917,7 +917,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else { // 判断是否已经有其他的 Bean 开始初始化了  如果已启动注册状态则要加锁注册单例singleton
-			if (hasBeanCreationStarted()) {// 注意，"注册Bean" 这个动作结束，Bean 依然还没有初始化
+			if (hasBeanCreationStarted()) {// 注意，"注册Bean" 这个动作结束，Bean 依然还没有初始化  比如alreadyCreated存放internalConfigurationAnnotationProcessor
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) { // 在 Spring 容器启动的最后，会 预初始化 所有的 singleton beans
 					this.beanDefinitionMap.put(beanName, beanDefinition);
@@ -929,7 +929,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				}
 			}
 			else { // 以前没有创建过  容器还在启动过程中，未开始创建Bean，直接注册BeanDefinition
-				// Still in startup registration phase
+				// 第二步   Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);//将BeanDefinition放到这个map中，key:bean名称 value:beanDefinition
 				this.beanDefinitionNames.add(beanName); //会按照bean配置的顺序保存每一个注册的Bean的名字
 				removeManualSingletonName(beanName); //这是个 LinkedHashSet，代表的是手动注册的 singleton bean
@@ -1168,7 +1168,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			Object result = getAutowireCandidateResolver().getLazyResolutionProxyIfNecessary(
 					descriptor, requestingBeanName);
 			if (result == null) {
-				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter);
+				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter); // 这里执行
 			}
 			return result;
 		}
@@ -1185,7 +1185,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				return shortcut;
 			}
 
-			Class<?> type = descriptor.getDependencyType();
+			Class<?> type = descriptor.getDependencyType(); // 要注入的类型
 			Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
 			if (value != null) {
 				if (value instanceof String) {
@@ -1211,7 +1211,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				return multipleBeans;
 			}
 
-			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);
+			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor); // 这里会找
 			if (matchingBeans.isEmpty()) {
 				if (isRequired(descriptor)) {
 					raiseNoMatchingBeanFound(type, descriptor.getResolvableType(), descriptor);
@@ -1248,7 +1248,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.add(autowiredBeanName);
 			}
 			if (instanceCandidate instanceof Class) {
-				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
+				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this); // 这里A引用B  这里会处理
 			}
 			Object result = instanceCandidate;
 			if (result instanceof NullBean) {
@@ -1413,7 +1413,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			@Nullable String beanName, Class<?> requiredType, DependencyDescriptor descriptor) {
 
 		String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
-				this, requiredType, true, descriptor.isEager());
+				this, requiredType, true, descriptor.isEager()); //A对象的时候 比如circleB
 		Map<String, Object> result = new LinkedHashMap<>(candidateNames.length);
 		for (Map.Entry<Class<?>, Object> classObjectEntry : this.resolvableDependencies.entrySet()) {
 			Class<?> autowiringType = classObjectEntry.getKey();

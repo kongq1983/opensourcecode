@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.jar.Manifest;
 
-/**
+/** 基于文件系统实现
  * {@link Archive} implementation backed by an exploded archive directory.
  *
  * @author Phillip Webb
