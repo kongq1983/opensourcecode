@@ -436,11 +436,11 @@ class ConstructorResolver {
 			// Try all methods with this name to see if they match the given arguments.
 			factoryClass = ClassUtils.getUserClass(factoryClass);
 
-			Method[] rawCandidates = getCandidateMethods(factoryClass, mbd);
+			Method[] rawCandidates = getCandidateMethods(factoryClass, mbd); //得到MyConfing的所有方法
 			List<Method> candidateList = new ArrayList<>();
 			for (Method candidate : rawCandidates) {
 				if (Modifier.isStatic(candidate.getModifiers()) == isStatic && mbd.isFactoryMethod(candidate)) {
-					candidateList.add(candidate);
+					candidateList.add(candidate); // 得到beanName的@Bean标注的 方法
 				}
 			}
 

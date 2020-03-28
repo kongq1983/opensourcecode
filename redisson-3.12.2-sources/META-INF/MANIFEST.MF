@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Implementation-Title: Redisson
+Implementation-Version: 3.12.2
+Built-By: root
+Specification-Vendor: Redisson
+Specification-Title: Redisson
+Implementation-Vendor-Id: org.redisson
+Implementation-Vendor: Redisson
+Implementation-Build-Date: 2020-02-18T10:33:21Z
+X-Compile-Target-JDK: 
+Implementation-Build: 
+X-Compile-Source-JDK: 
+Created-By: Apache Maven 3.6.2
+Build-Jdk: 1.8.0_201
+Specification-Version: 3.12
+Implementation-URL: http://redisson.org
+

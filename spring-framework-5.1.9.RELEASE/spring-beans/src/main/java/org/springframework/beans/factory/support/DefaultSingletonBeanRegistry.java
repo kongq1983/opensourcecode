@@ -178,7 +178,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) { //singletonObject等于null并且bean已经开始创建了  第一次isSingletonCurrentlyInCreation=false 并且singletonsCurrentlyInCreation有该beanName
 			synchronized (this.singletonObjects) {
 				singletonObject = this.earlySingletonObjects.get(beanName); // 如果找不到，再从earlySingletonObjects寻找 二级缓存
-				if (singletonObject == null && allowEarlyReference) {
+				if (singletonObject == null && allowEarlyReference) { // 循环依赖的时候 会进入下面方法  A注入B   B注入A的时候(这个时候调用A 会进入下面方法)
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName); // 从singletonFactories寻找对应的singleton的工厂 三级缓存
 					if (singletonFactory != null) {
 						singletonObject = singletonFactory.getObject(); // 调用工厂的getObject方法，得到对应的SingletonBean
@@ -191,7 +191,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		return singletonObject;
 	}
 
-	/**
+	/** 先判断有没有Bean正在创建(如果存在则报错)  然后创建Bean  添加到单例缓存
 	 * Return the (raw) singleton object registered under the given name,
 	 * creating and registering a new one if none registered yet.
 	 * @param beanName the name of the bean
@@ -219,7 +219,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
-					singletonObject = singletonFactory.getObject(); // 三级缓存
+					singletonObject = singletonFactory.getObject(); // 返回instance  这里面会处理注入对象
 					newSingleton = true;
 				}
 				catch (IllegalStateException ex) {

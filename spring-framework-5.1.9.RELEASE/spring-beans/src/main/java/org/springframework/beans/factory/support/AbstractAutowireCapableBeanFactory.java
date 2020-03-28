@@ -554,7 +554,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (instanceWrapper == null) {
 			instanceWrapper = createBeanInstance(beanName, mbd, args); // 说明不是 FactoryBean，这里实例化 Bean，这里非常关键
 		}
-		final Object bean = instanceWrapper.getWrappedInstance();
+		final Object bean = instanceWrapper.getWrappedInstance(); // 得到初始化后的对象
 		Class<?> beanType = instanceWrapper.getWrappedClass();
 		if (beanType != NullBean.class) {
 			mbd.resolvedTargetType = beanType;
@@ -578,12 +578,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// even when triggered by lifecycle interfaces like BeanFactoryAware. allowCircularReferences是否允许循环依赖
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName)); // 是否在singletonsCurrentlyInCreation创建队列里
-		if (earlySingletonExposure) {
+		if (earlySingletonExposure) { // 第一次处理是提前暴露引用，解决循环引用问题
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); //这里只放入三级缓存 singletonFactories 非单例的，就不会预加载
+			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); //这里只放入三级缓存 singletonFactories 非单例的，就不会预加载  额外处理SmartInstantiationAwareBeanPostProcessor
 		}
 
 		// Initialize the bean instance.
@@ -602,7 +602,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		if (earlySingletonExposure) { //(mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName))
+		if (earlySingletonExposure) { //二次处理是防止对象被改变，造成的已创建对象中持有的对象和这个对象不一致 (mbd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName))
 			Object earlySingletonReference = getSingleton(beanName, false);  // 已经放入创建队列情况下  从一级或者二级缓存取
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
@@ -612,7 +612,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
 					for (String dependentBean : dependentBeans) {
-						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
+						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) { // alreadyCreated存在返回false
 							actualDependentBeans.add(dependentBean);
 						}
 					}
