@@ -124,7 +124,7 @@ public class RedissonLock extends RedissonExpirable implements RLock {
         super(commandExecutor, name);
         this.commandExecutor = commandExecutor;
         this.id = commandExecutor.getConnectionManager().getId();
-        this.internalLockLeaseTime = commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout();
+        this.internalLockLeaseTime = commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout(); // 默认 30 * 1000
         this.entryName = id + ":" + name;
         this.pubSub = commandExecutor.getConnectionManager().getSubscribeService().getLockPubSub();
     }
@@ -293,7 +293,7 @@ public class RedissonLock extends RedissonExpirable implements RLock {
                     }
                 });
             }
-        }, internalLockLeaseTime / 3, TimeUnit.MILLISECONDS);
+        }, internalLockLeaseTime / 3, TimeUnit.MILLISECONDS);  //  LeaseTime/3   LeaseTime默认30s  这里就是10s 默认每隔10s 刷新时间
         
         ee.setTimeout(task);
     }
@@ -311,8 +311,8 @@ public class RedissonLock extends RedissonExpirable implements RLock {
 
     protected RFuture<Boolean> renewExpirationAsync(long threadId) {
         return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,
-                "if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then " +
-                    "redis.call('pexpire', KEYS[1], ARGV[1]); " +
+                "if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then " + // 判断map的key是否存在 KEYS[1]  lock:key  分布式锁的key  ARGV[2]  当前RedissonLock的id(uuid)+":"+threadId
+                    "redis.call('pexpire', KEYS[1], ARGV[1]); " + //存在  则过期时间-续期   ARGV[1]:失效时间  默认30000ms
                     "return 1; " +
                 "end; " +
                 "return 0;",

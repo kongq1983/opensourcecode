@@ -97,21 +97,21 @@ public class RedissonFairLock extends RedissonLock implements RLock {
     <T> RFuture<T> tryLockInnerAsync(long leaseTime, TimeUnit unit, long threadId, RedisStrictCommand<T> command) {
         internalLockLeaseTime = unit.toMillis(leaseTime);
 
-        long currentTime = System.currentTimeMillis();
-        if (command == RedisCommands.EVAL_NULL_BOOLEAN) {
+        long currentTime = System.currentTimeMillis(); // KEYS[1]: 锁名称  KEYS[2]: "redisson_lock_queue:{xxx}"   KEYS[3]: "redisson_lock_timeout:{xxx}"
+        if (command == RedisCommands.EVAL_NULL_BOOLEAN) { // ARGV[1]: "{leaseTime}"  ARGV[2]: "{Redisson.UUID}:{threadId}"  ARGV[3]: "{currentTime}"
             return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, command,
                     // remove stale threads
                     "while true do " +
-                        "local firstThreadId2 = redis.call('lindex', KEYS[2], 0);" +
+                        "local firstThreadId2 = redis.call('lindex', KEYS[2], 0);" + // 从redisson_lock_queue:{key} 队列 从左边获取第一个值
                         "if firstThreadId2 == false then " +
-                            "break;" +
+                            "break;" +  // 不存在 结束当前循环
                         "end;" +
-                        "local timeout = tonumber(redis.call('zscore', KEYS[3], firstThreadId2));" +
+                        "local timeout = tonumber(redis.call('zscore', KEYS[3], firstThreadId2));" + //存在情况下 redisson_lock_timeout:{key} 根据zscore key member
                         "if timeout <= tonumber(ARGV[3]) then " +
                             // remove the item from the queue and timeout set
                             // NOTE we do not alter any other timeout
-                            "redis.call('zrem', KEYS[3], firstThreadId2);" +
-                            "redis.call('lpop', KEYS[2]);" +
+                            "redis.call('zrem', KEYS[3], firstThreadId2);" + // zrem key member 删除firstThreadId2
+                            "redis.call('lpop', KEYS[2]);" + // 从左边弹出  从redisson_lock_queue:{key}
                         "else " +
                             "break;" +
                         "end;" +

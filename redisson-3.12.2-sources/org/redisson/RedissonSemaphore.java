@@ -435,9 +435,9 @@ public class RedissonSemaphore extends RedissonExpirable implements RSemaphore {
         if (permits == 0) {
             return RedissonPromise.newSucceededFuture(null);
         }
-
+        // KEYS[1] : redis的key   ARGV[1] : permits
         return commandExecutor.evalWriteAsync(getName(), StringCodec.INSTANCE, RedisCommands.EVAL_VOID,
-            "local value = redis.call('incrby', KEYS[1], ARGV[1]); " +
+            "local value = redis.call('incrby', KEYS[1], ARGV[1]); " +  //把permits的数量加上去  KEYS[1]=key  ARGV[1]=permits
             "redis.call('publish', KEYS[2], value); ",
             Arrays.<Object>asList(getName(), getChannelName()), permits);
     }
@@ -475,10 +475,10 @@ public class RedissonSemaphore extends RedissonExpirable implements RSemaphore {
     }
     
     @Override
-    public RFuture<Boolean> trySetPermitsAsync(int permits) {
+    public RFuture<Boolean> trySetPermitsAsync(int permits) { // KEYS[1] : redis的key   ARGV[1]=permits
         return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,
                 "local value = redis.call('get', KEYS[1]); " +
-                "if (value == false or value == 0) then "
+                "if (value == false or value == 0) then "  // 只有在key不存在，或者 key存在情况下，值为0的时候，才可以设置permits
                     + "redis.call('set', KEYS[1], ARGV[1]); "
                     + "redis.call('publish', KEYS[2], ARGV[1]); "
                     + "return 1;"

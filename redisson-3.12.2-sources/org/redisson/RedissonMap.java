@@ -537,12 +537,12 @@ public class RedissonMap<K, V> extends RedissonExpirable implements RMap<K, V> {
         return options == null || options.getWriter() == null;
     }
 
-    protected RFuture<V> putIfAbsentOperationAsync(K key, V value) {
+    protected RFuture<V> putIfAbsentOperationAsync(K key, V value) { //KEYS[1]: redisKey(传过来是什么，就是什么) ARGV[1]: encode过的MapKey ARGV[2]:encode过的MapValue
         return commandExecutor.evalWriteAsync(getName(key), codec, RedisCommands.EVAL_MAP_VALUE,
-                 "if redis.call('hsetnx', KEYS[1], ARGV[1], ARGV[2]) == 1 then "
+                 "if redis.call('hsetnx', KEYS[1], ARGV[1], ARGV[2]) == 1 then " //不存在，则设置 注意这里是hsetnx
                     + "return nil "
                 + "else "
-                    + "return redis.call('hget', KEYS[1], ARGV[1]) "
+                    + "return redis.call('hget', KEYS[1], ARGV[1]) " //存在，则返回值
                 + "end",
                 Collections.singletonList(getName(key)), encodeMapKey(key), encodeMapValue(value));
     }
@@ -888,9 +888,9 @@ public class RedissonMap<K, V> extends RedissonExpirable implements RMap<K, V> {
 
     protected RFuture<V> putOperationAsync(K key, V value) {
         return commandExecutor.evalWriteAsync(getName(key), codec, RedisCommands.EVAL_MAP_VALUE,
-                "local v = redis.call('hget', KEYS[1], ARGV[1]); "
-                + "redis.call('hset', KEYS[1], ARGV[1], ARGV[2]); "
-                + "return v",
+                "local v = redis.call('hget', KEYS[1], ARGV[1]); " // 取出redis中的值
+                + "redis.call('hset', KEYS[1], ARGV[1], ARGV[2]); "  //设置新值
+                + "return v", //返回旧值
                 Collections.singletonList(getName(key)), encodeMapKey(key), encodeMapValue(value));
     }
 

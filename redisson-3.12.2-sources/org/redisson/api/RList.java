@@ -83,7 +83,7 @@ public interface RList<V> extends List<V>, RExpirable, RListAsync<V>, RSortable<
      */
     List<V> readAll();
 
-    /**
+    /** 仅保留指定范围内的元素
      * Trim list and remains elements only in specified range
      * <code>fromIndex</code>, inclusive, and <code>toIndex</code>, inclusive.
      *
