@@ -169,7 +169,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * <p>Checks already instantiated singletons and also allows for an early
 	 * reference to a currently created singleton (resolving a circular reference).
 	 * @param beanName the name of the bean to look for  // allowEarlyReference=false 已经放入创建队列情况下(isSingletonCurrentlyInCreation=true)  从二级缓存取
-	 * @param allowEarlyReference whether early references should be created or not  循环依赖时=true 是否允许从singletonFactories中通过getObject拿到对象  从三级缓存放到二级缓存
+	 * @param allowEarlyReference whether early references should be created or not  允许循环依赖 循环依赖时=true 是否允许从singletonFactories中通过getObject拿到对象  从三级缓存放到二级缓存
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	@Nullable
@@ -219,7 +219,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
-					singletonObject = singletonFactory.getObject(); // 返回instance  这里面会处理注入对象
+					singletonObject = singletonFactory.getObject(); // 返回instance  这里面会处理注入对象 调用createBean
 					newSingleton = true;
 				}
 				catch (IllegalStateException ex) {
