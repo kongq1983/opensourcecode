@@ -589,7 +589,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				Set<String> autowiredBeanNames = new LinkedHashSet<>(1);
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
-				try {
+				try { //下面一句  see:  DefaultListableBeanFactory.resolveDependency
 					value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);  // 解决循环依赖  A引用B (A里面有个属性B) 这里返回B
 				}
 				catch (BeansException ex) {

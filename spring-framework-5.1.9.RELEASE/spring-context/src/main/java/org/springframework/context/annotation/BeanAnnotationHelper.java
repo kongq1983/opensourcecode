@@ -45,9 +45,9 @@ abstract class BeanAnnotationHelper {
 		String beanName = beanNameCache.get(beanMethod);
 		if (beanName == null) {
 			// By default, the bean name is the name of the @Bean-annotated method
-			beanName = beanMethod.getName();
+			beanName = beanMethod.getName(); // 默认是方法名称  如果没指定@Bean的name  实践:2个同名的方法都指定@Bean，会不会报错
 			// Check to see if the user has explicitly set a custom bean name...
-			AnnotationAttributes bean =
+			AnnotationAttributes bean =  // 有@Bean注解中提取name的值
 					AnnotatedElementUtils.findMergedAnnotationAttributes(beanMethod, Bean.class, false, false);
 			if (bean != null) {
 				String[] names = bean.getStringArray("name");
@@ -55,11 +55,11 @@ abstract class BeanAnnotationHelper {
 					beanName = names[0];
 				}
 			}
-			beanNameCache.put(beanMethod, beanName);
+			beanNameCache.put(beanMethod, beanName); //key:方法  value:方法名
 		}
 		return beanName;
 	}
-
+	/** 是否需要进行代理 */
 	public static boolean isScopedProxy(Method beanMethod) {
 		Boolean scopedProxy = scopedProxyCache.get(beanMethod);
 		if (scopedProxy == null) {

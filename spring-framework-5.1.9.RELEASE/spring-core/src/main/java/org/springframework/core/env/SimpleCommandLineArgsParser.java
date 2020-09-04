@@ -57,16 +57,16 @@ class SimpleCommandLineArgsParser {
 	 * {@link CommandLineArgs} object.
 	 * @param args command line arguments, typically from a {@code main()} method
 	 */
-	public CommandLineArgs parse(String... args) {
+	public CommandLineArgs parse(String... args) { // --priority1=program-agrs
 		CommandLineArgs commandLineArgs = new CommandLineArgs();
 		for (String arg : args) {
-			if (arg.startsWith("--")) {
-				String optionText = arg.substring(2, arg.length());
+			if (arg.startsWith("--")) { // 以--开头
+				String optionText = arg.substring(2, arg.length()); //把--去掉，得到priority1=program-agrs
 				String optionName;
 				String optionValue = null;
-				if (optionText.contains("=")) {
-					optionName = optionText.substring(0, optionText.indexOf('='));
-					optionValue = optionText.substring(optionText.indexOf('=')+1, optionText.length());
+				if (optionText.contains("=")) { //判断是否有=存在
+					optionName = optionText.substring(0, optionText.indexOf('=')); // 得到=之前的值，priority1
+					optionValue = optionText.substring(optionText.indexOf('=')+1, optionText.length()); //得到=之后的值，program-agrs
 				}
 				else {
 					optionName = optionText;
@@ -74,7 +74,7 @@ class SimpleCommandLineArgsParser {
 				if (optionName.isEmpty() || (optionValue != null && optionValue.isEmpty())) {
 					throw new IllegalArgumentException("Invalid argument syntax: " + arg);
 				}
-				commandLineArgs.addOptionArg(optionName, optionValue);
+				commandLineArgs.addOptionArg(optionName, optionValue); // key: string  value: arraylist  , Map<String, List<String>> optionArgs
 			}
 			else {
 				commandLineArgs.addNonOptionArg(arg);

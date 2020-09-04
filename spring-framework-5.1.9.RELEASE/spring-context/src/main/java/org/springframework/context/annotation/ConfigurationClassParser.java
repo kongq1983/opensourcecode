@@ -263,7 +263,7 @@ class ConfigurationClassParser {
 			processMemberClasses(configClass, sourceClass);
 		}
 
-		// Process any @PropertySource annotations
+		// Process any @PropertySource annotations 处理PropertySources
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
@@ -449,7 +449,7 @@ class ConfigurationClassParser {
 			try {
 				String resolvedLocation = this.environment.resolveRequiredPlaceholders(location);
 				Resource resource = this.resourceLoader.getResource(resolvedLocation);
-				addPropertySource(factory.createPropertySource(name, new EncodedResource(resource, encoding)));
+				addPropertySource(factory.createPropertySource(name, new EncodedResource(resource, encoding))); // 添加到propertySources
 			}
 			catch (IllegalArgumentException | FileNotFoundException | UnknownHostException ex) {
 				// Placeholders not resolvable or resource not found when trying to open it
@@ -492,7 +492,7 @@ class ConfigurationClassParser {
 		}
 
 		if (this.propertySourceNames.isEmpty()) {
-			propertySources.addLast(propertySource);
+			propertySources.addLast(propertySource);  // 添加到最后
 		}
 		else {
 			String firstProcessed = this.propertySourceNames.get(this.propertySourceNames.size() - 1);

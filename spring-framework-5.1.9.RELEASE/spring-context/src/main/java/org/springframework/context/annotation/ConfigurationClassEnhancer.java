@@ -271,7 +271,7 @@ class ConfigurationClassEnhancer {
 		@Override
 		@Nullable
 		public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-			Field field = ReflectionUtils.findField(obj.getClass(), BEAN_FACTORY_FIELD);
+			Field field = ReflectionUtils.findField(obj.getClass(), BEAN_FACTORY_FIELD); //fileName: $$beanFactory
 			Assert.state(field != null, "Unable to find generated BeanFactory field");
 			field.set(obj, args[0]);
 
@@ -316,11 +316,11 @@ class ConfigurationClassEnhancer {
 		public Object intercept(Object enhancedConfigInstance, Method beanMethod, Object[] beanMethodArgs,
 					MethodProxy cglibMethodProxy) throws Throwable {
 
-			ConfigurableBeanFactory beanFactory = getBeanFactory(enhancedConfigInstance);
-			String beanName = BeanAnnotationHelper.determineBeanNameFor(beanMethod);
+			ConfigurableBeanFactory beanFactory = getBeanFactory(enhancedConfigInstance); // 得到Spring的BeanFactory
+			String beanName = BeanAnnotationHelper.determineBeanNameFor(beanMethod); // 根据@Bean方法得到beanName，这里有缓存的
 
 			// Determine whether this bean is a scoped-proxy
-			if (BeanAnnotationHelper.isScopedProxy(beanMethod)) {
+			if (BeanAnnotationHelper.isScopedProxy(beanMethod)) { //该方法是否需要进行代理
 				String scopedBeanName = ScopedProxyCreator.getTargetBeanName(beanName);
 				if (beanFactory.isCurrentlyInCreation(scopedBeanName)) {
 					beanName = scopedBeanName;
@@ -360,10 +360,10 @@ class ConfigurationClassEnhancer {
 									"these container lifecycle issues; see @Bean javadoc for complete details.",
 							beanMethod.getDeclaringClass().getSimpleName(), beanMethod.getName()));
 				}
-				return cglibMethodProxy.invokeSuper(enhancedConfigInstance, beanMethodArgs);
+				return cglibMethodProxy.invokeSuper(enhancedConfigInstance, beanMethodArgs); // 第2次从这里过
 			}
 
-			return resolveBeanReference(beanMethod, beanMethodArgs, beanFactory, beanName);
+			return resolveBeanReference(beanMethod, beanMethodArgs, beanFactory, beanName); // 第一次从这里过
 		}
 
 		private Object resolveBeanReference(Method beanMethod, Object[] beanMethodArgs,
@@ -378,7 +378,7 @@ class ConfigurationClassEnhancer {
 				if (alreadyInCreation) {
 					beanFactory.setCurrentlyInCreation(beanName, false);
 				}
-				boolean useArgs = !ObjectUtils.isEmpty(beanMethodArgs);
+				boolean useArgs = !ObjectUtils.isEmpty(beanMethodArgs); //@Bean初始化是否使用变量
 				if (useArgs && beanFactory.isSingleton(beanName)) {
 					// Stubbed null arguments just for reference purposes,
 					// expecting them to be autowired for regular singleton references?
@@ -442,7 +442,7 @@ class ConfigurationClassEnhancer {
 		private ConfigurableBeanFactory getBeanFactory(Object enhancedConfigInstance) {
 			Field field = ReflectionUtils.findField(enhancedConfigInstance.getClass(), BEAN_FACTORY_FIELD);
 			Assert.state(field != null, "Unable to find generated bean factory field");
-			Object beanFactory = ReflectionUtils.getField(field, enhancedConfigInstance);
+			Object beanFactory = ReflectionUtils.getField(field, enhancedConfigInstance); // 从@Configuration增强类中得到BeanFactory,其实就是从$$beanFactory中得到
 			Assert.state(beanFactory != null, "BeanFactory has not been injected into @Configuration class");
 			Assert.state(beanFactory instanceof ConfigurableBeanFactory,
 					"Injected BeanFactory is not a ConfigurableBeanFactory");

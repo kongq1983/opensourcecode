@@ -1211,7 +1211,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				return multipleBeans;
 			}
 
-			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor); // 这里会找
+			Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor); // 这里会找到匹配的bean
 			if (matchingBeans.isEmpty()) {
 				if (isRequired(descriptor)) {
 					raiseNoMatchingBeanFound(type, descriptor.getResolvableType(), descriptor);
@@ -1248,7 +1248,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.add(autowiredBeanName);
 			}
 			if (instanceCandidate instanceof Class) {
-				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this); // 这里A引用B  这里会处理
+				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this); // 这里A引用B  这里会先处理B的初始化 其实就是调用beanFactory.getBean(beanName);
 			}
 			Object result = instanceCandidate;
 			if (result instanceof NullBean) {

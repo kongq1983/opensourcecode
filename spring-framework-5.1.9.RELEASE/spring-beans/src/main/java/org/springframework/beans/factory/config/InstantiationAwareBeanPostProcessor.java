@@ -119,7 +119,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 		return null;
 	}
 
-	/**
+	/** 这个方法回去调用 postProcessProperties
 	 * Post-process the given property values before the factory applies them
 	 * to the given bean. Allows for checking whether all dependencies have been
 	 * satisfied, for example based on a "Required" annotation on bean property setters.

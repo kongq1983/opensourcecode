@@ -360,7 +360,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 		public void invoke(Object target) throws Throwable {
 			ReflectionUtils.makeAccessible(this.method);
-			this.method.invoke(target, (Object[]) null);
+			this.method.invoke(target, (Object[]) null); // 调用具体的方法
 		}
 
 		@Override

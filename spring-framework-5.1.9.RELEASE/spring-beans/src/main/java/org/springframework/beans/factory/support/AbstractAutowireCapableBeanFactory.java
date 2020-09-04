@@ -552,7 +552,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			instanceWrapper = createBeanInstance(beanName, mbd, args); // 说明不是 FactoryBean，这里实例化 Bean，这里非常关键
+			instanceWrapper = createBeanInstance(beanName, mbd, args); // FactoryBeanName这种这里会初始化，正常bean会走下面的逻辑，这里非常关键
 		}
 		final Object bean = instanceWrapper.getWrappedInstance(); // 得到初始化后的对象
 		Class<?> beanType = instanceWrapper.getWrappedClass();
@@ -590,7 +590,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		try { //对bean进行填充，将各个属性值注入，其中，可能存在依赖于其他bean的属性，则会递归初始依赖bean
 			populateBean(beanName, mbd, instanceWrapper);
-			exposedObject = initializeBean(beanName, exposedObject, mbd); // 调用init 方法
+			exposedObject = initializeBean(beanName, exposedObject, mbd); // 处理BeanPostProcessor的before、调用InitializingBean、处理BeanPostProcessor的after、init-method调用
 		}
 		catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -1156,8 +1156,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
 
-		if (mbd.getFactoryMethodName() != null) {
-			return instantiateUsingFactoryMethod(beanName, mbd, args);
+		if (mbd.getFactoryMethodName() != null) { // 根据factoryMethodName
+			return instantiateUsingFactoryMethod(beanName, mbd, args); // bean里面创建别的bean  factoryMethodName 比如标注@Bean
 		}
 		//  resolved: 如果不是第一次创建，比如第二次创建 prototype bean
 		// Shortcut when re-creating the same bean...
@@ -1407,8 +1407,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) { // 如果@Autowired标注，走到AutowiredAnnotationBeanPostProcessor这个Processor 会进入到postProcessProperties方法
-					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
+					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp; // 如果是AutowiredAnnotationBeanPostProcessor，下面会属性注入
+					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName); // *******这里会属性注入
 					if (pvsToUse == null) { // 上面@Autowired注解 会调用AutowiredAnnotationBeanPostProcessor.postProcessProperties
 						if (filteredPds == null) {
 							filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
@@ -1762,16 +1762,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}, getAccessControlContext());
 		}
 		else {
-			invokeAwareMethods(beanName, bean);
+			invokeAwareMethods(beanName, bean); //如果实现了后面接口，则注入BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
 		}
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
-			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName); //处理注解@PostConstruct  BeanPostProcessor的postProcessBeforeInitialization
 		}
 
 		try {
-			invokeInitMethods(beanName, wrappedBean, mbd);
+			invokeInitMethods(beanName, wrappedBean, mbd);  // 处理 InitializingBean，处理init-method方法(xml配置)
 		}
 		catch (Throwable ex) {
 			throw new BeanCreationException(
@@ -1779,7 +1779,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
-			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName); // //处理BeanPostProcessor的postProcessAfterInitialization
 		}
 
 		return wrappedBean;
@@ -1834,14 +1834,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 			else {
-				((InitializingBean) bean).afterPropertiesSet();
+				((InitializingBean) bean).afterPropertiesSet(); //  调用afterPropertiesSet
 			}
 		}
 
 		if (mbd != null && bean.getClass() != NullBean.class) {
-			String initMethodName = mbd.getInitMethodName();
+			String initMethodName = mbd.getInitMethodName(); // bean标签指定init-method="initMethod"
 			if (StringUtils.hasLength(initMethodName) &&
-					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
+					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) && // 非(isInitializingBean && afterPropertiesSet方法名称) 这个 上面已经处理过了
 					!mbd.isExternallyManagedInitMethod(initMethodName)) {
 				invokeCustomInitMethod(beanName, bean, mbd);
 			}

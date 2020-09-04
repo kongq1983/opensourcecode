@@ -341,7 +341,7 @@ class ConstructorResolver {
 		mbd.factoryMethodToIntrospect = uniqueCandidate;
 	}
 
-	/**
+	/** getAllDeclaredMethods:获取本类以及父类或者父接口中所有的所有方法   getMethods:获取本类以及父类或者父接口中所有的公共方法
 	 * Retrieve all candidate methods for the given class, considering
 	 * the {@link RootBeanDefinition#isNonPublicAccessAllowed()} flag.
 	 * Called as the starting point for factory method determination.
@@ -358,7 +358,7 @@ class ConstructorResolver {
 		}
 	}
 
-	/**
+	/** 实例工厂  静态工厂
 	 * Instantiate the bean using a named factory method. The method may be static, if the
 	 * bean definition parameter specifies a class, rather than a "factory-bean", or
 	 * an instance variable on a factory object itself configured using Dependency Injection.
@@ -383,20 +383,20 @@ class ConstructorResolver {
 		Class<?> factoryClass;
 		boolean isStatic;
 
-		String factoryBeanName = mbd.getFactoryBeanName();
-		if (factoryBeanName != null) {
+		String factoryBeanName = mbd.getFactoryBeanName(); //工厂Bean名称
+		if (factoryBeanName != null) { //实例工厂
 			if (factoryBeanName.equals(beanName)) {
 				throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
 						"factory-bean reference points back to the same bean definition");
 			}
-			factoryBean = this.beanFactory.getBean(factoryBeanName);
+			factoryBean = this.beanFactory.getBean(factoryBeanName); //得到实例工厂Bean
 			if (mbd.isSingleton() && this.beanFactory.containsSingleton(beanName)) {
 				throw new ImplicitlyAppearedSingletonException();
 			}
 			factoryClass = factoryBean.getClass();
 			isStatic = false;
 		}
-		else {
+		else {  //静态工厂
 			// It's a static factory method on the bean class.
 			if (!mbd.hasBeanClass()) {
 				throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
@@ -409,7 +409,7 @@ class ConstructorResolver {
 
 		Method factoryMethodToUse = null;
 		ArgumentsHolder argsHolderToUse = null;
-		Object[] argsToUse = null;
+		Object[] argsToUse = null; // @Bean需要的参数
 
 		if (explicitArgs != null) {
 			argsToUse = explicitArgs;
@@ -436,24 +436,24 @@ class ConstructorResolver {
 			// Try all methods with this name to see if they match the given arguments.
 			factoryClass = ClassUtils.getUserClass(factoryClass);
 
-			Method[] rawCandidates = getCandidateMethods(factoryClass, mbd); //得到MyConfing的所有方法
-			List<Method> candidateList = new ArrayList<>();
+			Method[] rawCandidates = getCandidateMethods(factoryClass, mbd); //得到factoryClass(MyConfing)的所有方法
+			List<Method> candidateList = new ArrayList<>(); //@Bean标注的方法
 			for (Method candidate : rawCandidates) {
 				if (Modifier.isStatic(candidate.getModifiers()) == isStatic && mbd.isFactoryMethod(candidate)) {
 					candidateList.add(candidate); // 得到beanName的@Bean标注的 方法
 				}
 			}
 
-			if (candidateList.size() == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
+			if (candidateList.size() == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) { // @Bean 没有参数
 				Method uniqueCandidate = candidateList.get(0);
-				if (uniqueCandidate.getParameterCount() == 0) {
+				if (uniqueCandidate.getParameterCount() == 0) { // @Bean标注的方法，没有参数
 					mbd.factoryMethodToIntrospect = uniqueCandidate;
 					synchronized (mbd.constructorArgumentLock) {
 						mbd.resolvedConstructorOrFactoryMethod = uniqueCandidate;
 						mbd.constructorArgumentsResolved = true;
 						mbd.resolvedConstructorArguments = EMPTY_ARGS;
 					}
-					bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS));
+					bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS)); //初始化具体@Configuration下的@Bean
 					return bw;
 				}
 			}
@@ -486,9 +486,9 @@ class ConstructorResolver {
 			LinkedList<UnsatisfiedDependencyException> causes = null;
 
 			for (Method candidate : candidates) {
-				Class<?>[] paramTypes = candidate.getParameterTypes();
+				Class<?>[] paramTypes = candidate.getParameterTypes(); // 得到@Bean标注方法的参数类型 比如SmsCompoent
 
-				if (paramTypes.length >= minNrOfArgs) {
+				if (paramTypes.length >= minNrOfArgs) { // 有参数的
 					ArgumentsHolder argsHolder;
 
 					if (explicitArgs != null) {
@@ -504,7 +504,7 @@ class ConstructorResolver {
 							String[] paramNames = null;
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
-								paramNames = pnd.getParameterNames(candidate);
+								paramNames = pnd.getParameterNames(candidate); //得到参数名称
 							}
 							argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw,
 									paramTypes, paramNames, candidate, autowiring, candidates.length == 1);

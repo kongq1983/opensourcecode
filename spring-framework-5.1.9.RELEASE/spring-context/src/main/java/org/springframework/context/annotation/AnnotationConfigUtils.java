@@ -159,20 +159,20 @@ public abstract class AnnotationConfigUtils {
 		}
 		// registerPostProcessor 都是 this.beanDefinitionMap.put(beanName, beanDefinition);
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
-		// org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+		// org.springframework.context.annotation.internalConfigurationAnnotationProcessor  @Configuration
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-		// org.springframework.context.annotation.internalAutowiredAnnotationProcessor
+		// org.springframework.context.annotation.internalAutowiredAnnotationProcessor  @Autowired(@Qualifier),@Value,@Inject
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
-		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
+		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.  @Postconstruct,PreDestroy,@Resource
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
 			def.setSource(source);

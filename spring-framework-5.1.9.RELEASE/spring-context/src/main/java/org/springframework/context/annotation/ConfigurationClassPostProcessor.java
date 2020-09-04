@@ -251,7 +251,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		enhanceConfigurationClasses(beanFactory); //Configuration类增强 cglib
-		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
+		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory)); // 添加ImportAwareBeanPostProcessor
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
 			this.reader.loadBeanDefinitions(configClasses);
-			alreadyParsed.addAll(configClasses);
+			alreadyParsed.addAll(configClasses); //已经解析过的@Configuration
 
 			candidates.clear();
 			if (registry.getBeanDefinitionCount() > candidateNames.length) {
@@ -368,10 +368,10 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * @see ConfigurationClassEnhancer
 	 */
 	public void enhanceConfigurationClasses(ConfigurableListableBeanFactory beanFactory) {
-		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<>();
+		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<>(); // 从容器中找到所有@Configuration配置类的bean定义
 		for (String beanName : beanFactory.getBeanDefinitionNames()) {
 			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
-			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) { //Configuration class
+			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) { // @Configuration class
 				if (!(beanDef instanceof AbstractBeanDefinition)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +
 							beanName + "' since it is not stored in an AbstractBeanDefinition subclass");
@@ -423,13 +423,13 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		public ImportAwareBeanPostProcessor(BeanFactory beanFactory) {
 			this.beanFactory = beanFactory;
 		}
-
+		/** cglib增强的类  设置beanFactory */
 		@Override
 		public PropertyValues postProcessProperties(@Nullable PropertyValues pvs, Object bean, String beanName) {
 			// Inject the BeanFactory before AutowiredAnnotationBeanPostProcessor's
 			// postProcessProperties method attempts to autowire other configuration beans.
 			if (bean instanceof EnhancedConfiguration) { // EnhancedConfiguration 继承BeanFactoryAware
-				((EnhancedConfiguration) bean).setBeanFactory(this.beanFactory);
+				((EnhancedConfiguration) bean).setBeanFactory(this.beanFactory); //@Configuration的加强的类 访问BeanFactory 接口仅供框架内部使用，但是必须保持公开状态
 			}
 			return pvs;
 		}

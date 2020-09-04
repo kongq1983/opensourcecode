@@ -212,7 +212,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				} // singletonsCurrentlyInCreation.add(beanName)
-				beforeSingletonCreation(beanName); //排除所有被创建检查排除的bean列表 添加存放正在创建的bean，如果存在会报错
+				beforeSingletonCreation(beanName); //排除所有被创建检查排除的bean列表 singletonsCurrentlyInCreation添加存放正在创建的bean，如果存在会报错
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
 				if (recordSuppressedExceptions) {

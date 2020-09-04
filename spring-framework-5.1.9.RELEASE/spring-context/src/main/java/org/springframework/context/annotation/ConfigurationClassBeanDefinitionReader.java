@@ -137,7 +137,7 @@ class ConfigurationClassBeanDefinitionReader {
 		if (configClass.isImported()) {
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
-		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+		for (BeanMethod beanMethod : configClass.getBeanMethods()) { // 处理BeanMethod @Configuration里配置的@Bean
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 
@@ -173,9 +173,9 @@ class ConfigurationClassBeanDefinitionReader {
 	 */
 	@SuppressWarnings("deprecation")  // for RequiredAnnotationBeanPostProcessor.SKIP_REQUIRED_CHECK_ATTRIBUTE
 	private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
-		ConfigurationClass configClass = beanMethod.getConfigurationClass();
+		ConfigurationClass configClass = beanMethod.getConfigurationClass(); //某个@Configuration
 		MethodMetadata metadata = beanMethod.getMetadata();
-		String methodName = metadata.getMethodName();
+		String methodName = metadata.getMethodName(); //@Bean的方法名称
 
 		// Do we need to mark the bean as skipped by its condition?
 		if (this.conditionEvaluator.shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN)) {
@@ -186,11 +186,11 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
-		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class); // 获取Bean注解属性的值
+		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class); // 获取@Bean注解设置的的值
 		Assert.state(bean != null, "No @Bean annotation attributes");
 
 		// Consider name and any aliases
-		List<String> names = new ArrayList<>(Arrays.asList(bean.getStringArray("name")));
+		List<String> names = new ArrayList<>(Arrays.asList(bean.getStringArray("name"))); //@Bean注解有没有指定name的值
 		String beanName = (!names.isEmpty() ? names.remove(0) : methodName);
 
 		// Register aliases even when overridden
@@ -219,8 +219,8 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 		else {
 			// instance @Bean method
-			beanDef.setFactoryBeanName(configClass.getBeanName());
-			beanDef.setUniqueFactoryMethodName(methodName);
+			beanDef.setFactoryBeanName(configClass.getBeanName()); //@Configuration的bean名称
+			beanDef.setUniqueFactoryMethodName(methodName); //@Bean标注的方法名称
 		}
 		beanDef.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
 		beanDef.setAttribute(org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor.
